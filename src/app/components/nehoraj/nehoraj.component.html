@@ -92,7 +92,7 @@
           class="flex flex-col items-center justify-center space-y-4 text-center"
         >
           <div class="space-y-2">
-            <div class="inline-block rounded-lg bg-[#f5f5f5] px-3 py-1 text-sm">
+            <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
               Servicios
             </div>
             <div class="text-center">
@@ -296,7 +296,9 @@
         <div class="container px-4 md:px-6">
           <div class="flex flex-col items-center justify-center space-y-4 text-center">
             <div class="space-y-2">
-              <div class="inline-block rounded-lg bg-[#f5f5f5] px-3 py-1 text-md">Precios</div>
+              <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
+                Precios
+              </div>
               <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
                 Soluciones Asequibles para Tu Negocio
               </h2>
@@ -340,21 +342,91 @@
           <h2 class="text-3xl font-bold tracking-tight sm:text-5xl">Nuestro Equipo</h2>
         </div>
         <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div class="p-6 bg-white rounded-lg shadow">
+          <div class="p-6 bg-white rounded-lg shadow-md text-center">
+            <div class="inline-block rounded-full overflow-hidden h-52 w-52 mx-auto">
+              <img src="../../../assets/img/cofounder-1.png" alt="">
+            </div>
+            <h2 class="text-md font-semibold">Juan Andrés García Carpizo</h2>
             <h3 class="text-xl font-semibold">Co-Fundador y Socio Inversionista</h3>
-            <p class="mt-2 text-gray-600">Descripción</p>
+            <p class="mt-2 text-gray-600">
+              Es un emprendedor apasionado con una visión clara para el crecimiento empresarial. 
+              Su experiencia y liderazgo han sido fundamentales para establecer y expandir Nehoras.
+            </p>
           </div>
-          <div class="p-6 bg-white rounded-lg shadow">
+          <div class="p-6 bg-white rounded-lg shadow-md text-center">
+            <div class="inline-block rounded-full overflow-hidden h-52 w-52 mx-auto">
+              <img src="../../../assets/img/cofounder-3.png" alt="">
+            </div>
+            <h2 class="text-md font-semibold">René Sandoval</h2>
             <h3 class="text-xl font-semibold">Co-Fundador y Socio Inversionista</h3>
-            <p class="mt-2 text-gray-600">Descripción</p>
+            <p class="mt-2 text-gray-600">
+              Aporta una perspectiva estratégica única y sólida experiencia en inversiones. 
+              Es un líder visionario comprometido con impulsar el éxito y la innovación en Nehoras.
+            </p>
           </div>
-          <div class="p-6 bg-white rounded-lg shadow">
+          <div class="p-6 bg-white rounded-lg shadow-md text-center">
+            <div class="inline-block rounded-full overflow-hidden h-52 w-52 mx-auto">
+              <img src="../../../assets/img/cofounder-2.png" alt="">
+            </div>
+            <h2 class="text-md font-semibold">David Antonio Chay May</h2>
             <h3 class="text-xl font-semibold">Socio y Asesor Fiscal</h3>
-            <p class="mt-2 text-gray-600">Descripción</p>
+            <p class="mt-2 text-gray-600">
+              Es un experto en asesoría fiscal con un enfoque meticuloso en la optimización financiera. 
+              Su conocimiento profundo y su habilidad para resolver problemas son recursos invaluables 
+              para el equipo de Nehoras.
+            </p>
           </div>
         </div>
       </div>
-    </section>    
+    </section>
+    
+    <section id="contact" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
+      <div class="container px-4 md:px-8">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-5xl">Contacto</h2>
+        </div>
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Información de Contacto -->
+          <div class="p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4">Información de Contacto</h3>
+            <ul class="text-gray-600">
+              <li class="mb-2">
+                <span class="font-semibold">Dirección:</span> Calle 63 #25, Centro, Campeche, Campeche 
+              </li>
+              <li class="mb-2">
+                <span class="font-semibold">Teléfono:</span> (981) 16-24688
+              </li>
+              <li class="mb-2">
+                <span class="font-semibold">Correo Electrónico:</span>
+                <p>
+                  contacto&#64;nehoraj.com
+                </p> 
+              </li>
+            </ul>
+          </div>
+          <!-- Formulario de Contacto -->
+          <div class="p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4">Envíanos un Mensaje</h3>
+            <form action="#" method="POST">
+              <div class="mb-4">
+                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
+              </div>
+              <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700">Tu Correo Electrónico</label>
+                <input type="email" id="email" name="email" required placeholder="correo@example.com" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
+              </div>
+              <div class="mb-4">
+                <label for="mensaje" class="block text-sm font-medium text-gray-700">Mensaje</label>
+                <textarea id="mensaje" name="mensaje" rows="4" required placeholder="Escribe tu mensaje aquí" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"></textarea>
+              </div>
+              <button type="submit" class="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Enviar Mensaje</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    
       
   </main>
 
