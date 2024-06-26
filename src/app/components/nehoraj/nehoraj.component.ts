@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-nehoraj',
@@ -10,7 +10,7 @@ import { Component, NgModule } from '@angular/core';
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
 })
-export class NehorajComponent {
+export class NehorajComponent implements OnInit{
   plans = [
     {
       title: 'Basica',
@@ -62,4 +62,8 @@ export class NehorajComponent {
   ];
 
   constructor() {}
+
+  ngOnInit() {
+    
+  }
 }
