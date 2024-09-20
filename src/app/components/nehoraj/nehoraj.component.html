@@ -1,29 +1,25 @@
 <div class="flex flex-col min-h-[100dvh] bg-[#fff] text-[#000]">
-
+  
   <header class="px-4 lg:px-8 h-14 flex items-center justify-between bg-white">
-    <a href="#" class="flex items-center justify-center">
+    <a href="#" class="flex items-center justify-center transition-transform hover:scale-105">
       <svg
-        class="h-6 w-6"
+        class="h-8 w-8 text-sky-500"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       >
-        <path
-          d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"
-        ></path>
-        <path
-          d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"
-        ></path>
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
         <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
         <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
       </svg>
-      <span class="text-xl font-bold">Nehoraj</span>
+      <span class="ml-2 text-2xl font-bold text-gray-800">Nehoraj</span>
     </a>
   
     <button class="md:hidden" (click)="toggleMenu()">
@@ -99,7 +95,7 @@
           class="flex flex-col items-center justify-center space-y-4 text-center"
         >
           <div class="space-y-2">
-            <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
+            <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
               Servicios
             </div>
             <div class="text-center">
@@ -167,106 +163,39 @@
       </div>
     </section>    
 
-    <section id="testimonials" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
-      <div class="container px-4 md:px-6">
-        <div class="flex flex-col items-center justify-center space-y-4 text-center">
+    <section id="testimonials" class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-gray-100 to-white">
+      <div class="container px-4 md:px-6 mx-auto">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <div class="space-y-2">
-            <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
+            <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
               Testimonios
             </div>
             <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl text-gray-900">
               Lo que dicen nuestros clientes
             </h2>
-            <p class="max-w-[900px] text-gray-600 text-lg md:text-xl lg:text-lg xl:text-xl">
+            <p class="max-w-[900px] text-gray-600 text-lg md:text-xl lg:text-lg xl:text-xl mx-auto">
               Descubre cómo hemos ayudado a empresarios y pequeños empresarios en su camino hacia el éxito.
             </p>
           </div>
         </div>
-        <div class="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-          <div class="flex flex-col justify-center space-y-4">
-            <div class="card bg-white shadow-md rounded-lg overflow-hidden">
-              <div class="card-content space-y-4 p-6">
-                <div class="space-y-2">
-                  <p class="text-lg font-medium text-gray-900">
-                    "Nehoras ha sido un socio invaluable en el crecimiento de mi negocio. 
-                    Su guía y apoyo han sido fundamentales para mi éxito."
-                  </p>
-                  <div class="flex items-center gap-2 mt-4">
-                    <div class="avatar">
-                      <img src="/placeholder-user.jpg" class="avatar-image rounded-full" alt="Foto de perfil de Juan Velazquez" />
-                      <div class="avatar-fallback bg-gray-300 rounded-full text-gray-700 text-sm font-bold">JD</div>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Juan Velazquez, Fundador</p>
-                      <p class="text-sm text-gray-600">Carnes & Cortes Co</p>
-                    </div>
-                  </div>
-                </div>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
+          <div *ngFor="let testimonial of testimonials; let i = index" 
+               class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1"
+               [ngClass]="{'md:col-span-2': i === 0}">
+            <div class="flex flex-col h-full">
+              <div class="flex-grow">
+                <svg class="h-8 w-8 text-sky-400 mb-4" fill="currentColor" viewBox="0 0 32 32">
+                  <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-4">
+                  {{ testimonial.quote }}
+                </p>
               </div>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center space-y-4">
-            <div class="card bg-white shadow-md rounded-lg overflow-hidden">
-              <div class="card-content space-y-4 p-6">
-                <div class="space-y-2">
-                  <p class="text-lg font-medium text-gray-900">
-                    "Gracias a Nehoras, pude asegurar la financiación que necesitaba 
-                    para llevar mi negocio al siguiente nivel."
-                  </p>
-                  <div class="flex items-center gap-2 mt-4">
-                    <div class="avatar">
-                      <img src="/placeholder-user.jpg" class="avatar-image rounded-full" alt="Foto de perfil de Carlos Martinez" />
-                      <div class="avatar-fallback bg-gray-300 rounded-full text-gray-700 text-sm font-bold">JS</div>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Carlos Martinez, Fundador</p>
-                      <p class="text-sm text-gray-600">Multiservicios Martinez</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center space-y-4">
-            <div class="card bg-white shadow-md rounded-lg overflow-hidden">
-              <div class="card-content space-y-4 p-6">
-                <div class="space-y-2">
-                  <p class="text-lg font-medium text-gray-900">
-                    "El mentoría y coaching que he recibido de Nehoras ha 
-                    sido transformador para mi negocio."
-                  </p>
-                  <div class="flex items-center gap-2 mt-4">
-                    <div class="avatar">
-                      <img src="/placeholder-user.jpg" class="avatar-image rounded-full" alt="Foto de perfil de Sarah Perez" />
-                      <div class="avatar-fallback bg-gray-300 rounded-full text-gray-700 text-sm font-bold">SJ</div>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Sarah Perez, Propietaria</p>
-                      <p class="text-sm text-gray-600">Accesorios Sar</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center space-y-4">
-            <div class="card bg-white shadow-md rounded-lg overflow-hidden">
-              <div class="card-content space-y-4 p-6">
-                <div class="space-y-2">
-                  <p class="text-lg font-medium text-gray-900">
-                    "No podría haber pedido un mejor socio que Nehoras. 
-                    Su experiencia y apoyo han sido invaluables."
-                  </p>
-                  <div class="flex items-center gap-2 mt-4">
-                    <div class="avatar">
-                      <img src="/placeholder-user.jpg" class="avatar-image rounded-full" alt="Foto de perfil de Marcos Gomez" />
-                      <div class="avatar-fallback bg-gray-300 rounded-full text-gray-700 text-sm font-bold">MB</div>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Marcos Gomez, Propietario</p>
-                      <p class="text-sm text-gray-600">IT Soluciones Peninsula</p>
-                    </div>
-                  </div>
+              <div class="flex items-center gap-4 mt-4">
+                <img [src]="testimonial.avatar" class="w-12 h-12 rounded-full object-cover" [alt]="'Foto de ' + testimonial.name">
+                <div>
+                  <p class="font-semibold text-gray-900">{{ testimonial.name }}</p>
+                  <p class="text-sm text-gray-600">{{ testimonial.position }}, {{ testimonial.company }}</p>
                 </div>
               </div>
             </div>
@@ -303,7 +232,8 @@
       <div class="container px-4 md:px-6">
         <div class="flex flex-col items-center justify-center space-y-4 text-center">
           <div class="space-y-2">
-            <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
+            <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
+             
               Precios
             </div>
             <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -315,16 +245,21 @@
             </p>
           </div>
         </div>
-        <div class="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-          <div *ngFor="let plan of plans" class="card border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div class="card-header bg-gray-100 px-4 py-3 text-center">
+        <div class="mx-auto grid max-w-7xl items-start gap-6 py-12 lg:grid-cols-4 lg:gap-8">
+          <div *ngFor="let plan of plans; let i = index" 
+               class="card border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1"
+               [ngClass]="{'border-sky-500 shadow-md': i === 1}">
+            <div class="card-header bg-gray-100 px-4 py-3 text-center relative">
               <div class="text-lg font-semibold text-gray-800">{{ plan.title }}</div>
               <div class="text-sm text-gray-600">{{ plan.description }}</div>
+              <div *ngIf="i === 1" class="absolute top-0 right-0 bg-sky-500 text-white text-xs font-bold px-2 py-1 rounded-bl">
+                Recomendado
+              </div>
             </div>
             <div class="card-content px-4 py-6">
               <div class="flex items-center justify-center mb-4">
                 <div class="text-3xl font-bold">{{ plan.price }}</div>
-                <div class="text-sm text-gray-600 ml-2">/ al mes</div>
+                <div class="text-sm text-gray-600 ml-2">/ {{ plan.priceInterval }}</div>
               </div>
               <ol class="text-sm text-gray-700 list-decimal list-inside">
                 <li *ngFor="let feature of plan.features" class="mb-2">
@@ -334,7 +269,7 @@
               <div class="flex justify-center mt-4">
                 <a
                   href="#contact"
-                  class="button bg-sky-500 text-white px-4 py-2 rounded-full transition-colors duration-300 ease-in-out hover:bg-sky-800 text-center"
+                  class="button bg-sky-500 text-white px-4 py-2 rounded-full transition-all duration-300 ease-in-out hover:bg-sky-600 hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 text-center"
                 >
                   Comienza Ahora
                 </a>
@@ -453,66 +388,72 @@
       
   </main>
 
-  <footer class="py-6 md:py-12 lg:py-16">
-    <div class="container px-4 md:px-6">
-      <div class="grid gap-4 sm:grid-cols-[1fr_auto] md:gap-6">
-        <div class="flex items-center justify-center sm:justify-start">
-          <a href="#" class="flex items-center justify-center">
+  <footer class="py-8 md:py-12 lg:py-16 bg-gray-100">
+    <div class="container px-4 md:px-6 mx-auto">
+      <div class="grid gap-8 sm:grid-cols-[1fr_auto] md:gap-12">
+        <div class="flex flex-col items-center sm:items-start space-y-4">
+          <a href="#" class="flex items-center justify-center transition-transform hover:scale-105">
             <svg
-              class="h-6 w-6"
+              class="h-8 w-8 text-sky-500"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <path
-                d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"
-              ></path>
-              <path
-                d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"
-              ></path>
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+              <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
               <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
               <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
             </svg>
-            <span class="ml-2 text-xl font-bold">Nehoraj</span>
+            <span class="ml-2 text-2xl font-bold text-gray-800">Nehoraj</span>
           </a>
+          <p class="text-sm text-gray-600 text-center sm:text-left">
+            Impulsando el éxito de emprendedores y pequeñas empresas.
+          </p>
         </div>
-        <nav class="flex items-center justify-center sm:justify-end">
-          <ul class="flex gap-4">
+        <nav class="flex flex-col items-center sm:items-end">
+          <ul class="flex flex-wrap justify-center sm:justify-end gap-6">
             <li>
               <a
                 href="#features"
-                class="text-sm font-medium hover:underline underline-offset-4"
-                >Servicos
+                class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out"
+              >
+                Servicios
               </a>
             </li>
             <li>
               <a
                 href="#pricing"
-                class="text-sm font-medium hover:underline underline-offset-4"
-                >Precios
+                class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out"
+              >
+                Precios
               </a>
             </li>
             <li>
               <a
                 href="#testimonials"
-                class="text-sm font-medium hover:underline underline-offset-4"
-                >Testimonios</a
+                class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out"
               >
+                Testimonios
+              </a>
             </li>
             <li>
               <a
                 href="#contact"
-                class="text-sm font-medium hover:underline underline-offset-4"
-                >Contacto
+                class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out"
+              >
+                Contacto
               </a>
             </li>
           </ul>
+          <div class="mt-6 text-sm text-gray-500">
+            © 2024 Nehoraj. Todos los derechos reservados.
+          </div>
         </nav>
       </div>
     </div>
