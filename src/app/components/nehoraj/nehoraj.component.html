@@ -1,7 +1,7 @@
 <div class="flex flex-col min-h-[100dvh] bg-[#fff] text-[#000]">
 
-  <header class="px-4 lg:px-8 h-14 flex items-center">
-    <a routerLink="#" class="flex items-center justify-center">
+  <header class="px-4 lg:px-8 h-14 flex items-center justify-between bg-white">
+    <a href="#" class="flex items-center justify-center">
       <svg
         class="h-6 w-6"
         xmlns="http://www.w3.org/2000/svg"
@@ -25,25 +25,35 @@
       </svg>
       <span class="text-xl font-bold">Nehoraj</span>
     </a>
-    <nav class="ml-auto flex gap-4 sm:gap-6">
-      <a href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-primary-color transition-colors duration-300">
+  
+    <button class="md:hidden" (click)="toggleMenu()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+    </button>
+  
+    <nav class="hidden md:flex gap-4 sm:gap-6">
+      <a href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Servicios
-        <span class="nav-link-underline"></span>
       </a>
-      <a href="#testimonials" class="nav-link text-sm font-medium text-gray-600 hover:text-primary-color transition-colors duration-300">
+      <a href="#testimonials" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Testimonios
-        <span class="nav-link-underline"></span>
       </a>
-      <a href="#pricing" class="nav-link text-sm font-medium text-gray-600 hover:text-primary-color transition-colors duration-300">
+      <a href="#pricing" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Precios
-        <span class="nav-link-underline"></span>
       </a>
-      <a href="#contact" class="nav-link text-sm font-medium text-gray-600 hover:text-primary-color transition-colors duration-300">
+      <a href="#contact" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Contacto
-        <span class="nav-link-underline"></span>
       </a>
     </nav>
   </header>
+  
+  <nav class="md:hidden transition-all duration-300 ease-in-out" [class.hidden]="!menuOpen">
+    <a href="#features" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
+    <a href="#testimonials" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Testimonios</a>
+    <a href="#pricing" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Precios</a>
+    <a href="#contact" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Contacto</a>
+  </nav>
 
   <main class="flex-1">
 
@@ -66,11 +76,12 @@
               </p>
             </div>
             <div class="flex flex-col gap-2 min-[400px]:flex-row">
-              <button
-                routerLink="#"
-                class="inline-flex h-10 items-center justify-center rounded-md bg-[#000] px-8 text-sm font-medium text-[#fff] shadow transition-colors hover:bg-[#333] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                >Comienza Ahora</button
+              <a
+              href="#contact"
+              class="inline-flex h-10 items-center justify-center rounded-md bg-[#000] px-8 text-sm font-medium text-[#fff] shadow transition-colors hover:bg-[#333] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               >
+              Comienza Ahora
+              </a>
             </div>
           </div>
           <img
@@ -279,57 +290,59 @@
               Ponte en contacto con nosotros hoy mismo para aprender más sobre cómo podemos ayudarte a alcanzar tus objetivos empresariales.
             </p>        
           </div>
-          <button
-            routerLink="#"
+          <a
+            href="#contact"
             class="inline-flex h-10 items-center justify-center rounded-md bg-[#000] px-8 text-sm font-medium text-[#fff] shadow transition-colors hover:bg-[#333] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             >Contactanos
-          </button>
+          </a>
         </div>
       </div>
     </section>
 
     <section id="pricing" class="w-full py-12 md:py-24 lg:py-32 bg-[#f5f5f5]">
-        <div class="container px-4 md:px-6">
-          <div class="flex flex-col items-center justify-center space-y-4 text-center">
-            <div class="space-y-2">
-              <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
-                Precios
-              </div>
-              <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
-                Soluciones Asequibles para Tu Negocio
-              </h2>
-              <p class="max-w-[900px] text-[#666] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Elige el plan que mejor se adapte a tus necesidades y presupuesto. 
-                Opciones flexibles para apoyar tu viaje emprendedor.
-              </p>
+      <div class="container px-4 md:px-6">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center">
+          <div class="space-y-2">
+            <div class="inline-block rounded-lg bg-gray-300 px-3 py-1 text-sm text-gray-700">
+              Precios
             </div>
+            <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
+              Soluciones Asequibles para Tu Negocio
+            </h2>
+            <p class="max-w-[900px] text-[#666] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Elige el plan que mejor se adapte a tus necesidades y presupuesto. 
+              Opciones flexibles para apoyar tu viaje emprendedor.
+            </p>
           </div>
-          <div class="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-            <div *ngFor="let plan of plans" class="card border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-              <div class="card-header bg-gray-100 px-4 py-3 m-auto">
-                <div class="text-lg font-semibold text-gray-800">{{ plan.title }}</div>
-                <div class="text-sm text-gray-600">{{ plan.description }}</div>
+        </div>
+        <div class="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
+          <div *ngFor="let plan of plans" class="card border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <div class="card-header bg-gray-100 px-4 py-3 text-center">
+              <div class="text-lg font-semibold text-gray-800">{{ plan.title }}</div>
+              <div class="text-sm text-gray-600">{{ plan.description }}</div>
+            </div>
+            <div class="card-content px-4 py-6">
+              <div class="flex items-center justify-center mb-4">
+                <div class="text-3xl font-bold">{{ plan.price }}</div>
+                <div class="text-sm text-gray-600 ml-2">/ al mes</div>
               </div>
-              <div class="card-content px-4 py-6">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="text-3xl font-bold ml-16">{{ plan.price }}</div>
-                  <div class="text-sm text-gray-600 mr-16">al mes</div>
-                </div>
-                <ul class="text-sm text-gray-700">
-                  <li *ngFor="let feature of plan.features" class="flex items-center space-x-2 mb-2">
-                    <svg *ngIf="feature.icon" class="w-4 h-4 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path [attr.d]="feature.icon" />
-                    </svg>
-                    <span>{{ feature.text }}</span>
-                  </li>
-                </ul>
-                <button class="button bg-sky-500 text-white px-4 py-2 rounded-full mt-4 mx-auto block transition-colors duration-300 ease-in-out hover:bg-sky-800">
-                    Comienza Ahora
-                </button>
+              <ol class="text-sm text-gray-700 list-decimal list-inside">
+                <li *ngFor="let feature of plan.features" class="mb-2">
+                  {{ feature.text }}
+                </li>
+              </ol>
+              <div class="flex justify-center mt-4">
+                <a
+                  href="#contact"
+                  class="button bg-sky-500 text-white px-4 py-2 rounded-full transition-colors duration-300 ease-in-out hover:bg-sky-800 text-center"
+                >
+                  Comienza Ahora
+                </a>
               </div>
             </div>
           </div>
         </div>
+      </div>
     </section>
 
     <section id="team" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
@@ -444,7 +457,7 @@
     <div class="container px-4 md:px-6">
       <div class="grid gap-4 sm:grid-cols-[1fr_auto] md:gap-6">
         <div class="flex items-center justify-center sm:justify-start">
-          <a routerLink="#" class="flex items-center justify-center">
+          <a href="#" class="flex items-center justify-center">
             <svg
               class="h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
@@ -472,32 +485,32 @@
         <nav class="flex items-center justify-center sm:justify-end">
           <ul class="flex gap-4">
             <li>
-              <button
-                routerLink="#"
+              <a
+                href="#features"
                 class="text-sm font-medium hover:underline underline-offset-4"
                 >Servicos
-              </button>
+              </a>
             </li>
             <li>
-              <button
-                routerLink="#"
+              <a
+                href="#pricing"
                 class="text-sm font-medium hover:underline underline-offset-4"
-                >Precios</button
+                >Precios
+              </a>
+            </li>
+            <li>
+              <a
+                href="#testimonials"
+                class="text-sm font-medium hover:underline underline-offset-4"
+                >Testimonios</a
               >
             </li>
             <li>
-              <button
-                routerLink="#"
+              <a
+                href="#contact"
                 class="text-sm font-medium hover:underline underline-offset-4"
-                >Testimonios</button
-              >
-            </li>
-            <li>
-              <button
-                routerLink="#"
-                class="text-sm font-medium hover:underline underline-offset-4"
-                >Contacto</button
-              >
+                >Contacto
+              </a>
             </li>
           </ul>
         </nav>

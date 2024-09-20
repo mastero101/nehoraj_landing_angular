@@ -10,7 +10,7 @@ import { Component, NgModule, OnInit } from '@angular/core';
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
 })
-export class NehorajComponent implements OnInit{
+export class NehorajComponent implements OnInit {
   plans = [
     {
       title: 'Basica',
@@ -61,9 +61,15 @@ export class NehorajComponent implements OnInit{
     }
   ];
 
+  menuOpen = false;
+
   constructor() {}
 
   ngOnInit() {
     
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 }
