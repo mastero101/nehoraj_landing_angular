@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms'; 
 
 @Component({
   selector: 'app-nehoraj',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule 
   ],
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
 })
+
 export class NehorajComponent implements OnInit {
   plans = [
     {
@@ -71,5 +74,17 @@ export class NehorajComponent implements OnInit {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  nombre: string = '';
+  email: string = '';
+  mensaje: string = '';
+
+  sendWhatsAppMessage() {
+    const phoneNumber = '529811402316'; // Reemplaza con tu número de WhatsApp
+    const whatsappMessage = `Hola, mi nombre es ${this.nombre}. Mi correo electrónico es ${this.email}. ${this.mensaje}`;
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+    window.open(whatsappUrl, '_blank');
   }
 }

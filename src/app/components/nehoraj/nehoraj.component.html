@@ -430,20 +430,20 @@
           <!-- Formulario de Contacto -->
           <div class="p-6 bg-white rounded-lg shadow-md">
             <h3 class="text-xl font-semibold mb-4">Envíanos un Mensaje</h3>
-            <form action="#" method="POST">
+            <form (ngSubmit)="sendWhatsAppMessage()" #contactForm="ngForm">
               <div class="mb-4">
                 <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
+                <input type="text" id="nombre" name="nombre" [(ngModel)]="nombre" required placeholder="Tu nombre" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
               </div>
               <div class="mb-4">
                 <label for="email" class="block text-sm font-medium text-gray-700">Tu Correo Electrónico</label>
-                <input type="email" id="email" name="email" required placeholder="correo@example.com" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
+                <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="correo@example.com" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300">
               </div>
               <div class="mb-4">
                 <label for="mensaje" class="block text-sm font-medium text-gray-700">Mensaje</label>
-                <textarea id="mensaje" name="mensaje" rows="4" required placeholder="Escribe tu mensaje aquí" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"></textarea>
+                <textarea id="mensaje" name="mensaje" [(ngModel)]="mensaje" rows="4" required placeholder="Escribe tu mensaje aquí" class="mt-1 px-4 py-2 w-full border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"></textarea>
               </div>
-              <button type="submit" class="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">Enviar Mensaje</button>
+              <button type="submit" [disabled]="!contactForm.form.valid" class="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50">Enviar Mensaje</button>
             </form>
           </div>
         </div>
