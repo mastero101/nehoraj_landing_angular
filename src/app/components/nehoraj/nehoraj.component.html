@@ -163,47 +163,118 @@
       </div>
     </section>    
 
-    <section id="testimonials" class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-gray-100 to-white">
+    <section id="solutions" class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-gray-100 to-white">
       <div class="container px-4 md:px-6 mx-auto">
         <div class="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <div class="space-y-2">
             <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
-              Testimonios
+              Soluciones
             </div>
             <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl text-gray-900">
-              Lo que dicen nuestros clientes
+              Nuestras Soluciones
             </h2>
             <p class="max-w-[900px] text-gray-600 text-lg md:text-xl lg:text-lg xl:text-xl mx-auto">
-              Descubre cómo hemos ayudado a empresarios y pequeños empresarios en su camino hacia el éxito.
+              Descubre cómo nuestras soluciones pueden ayudar a tu negocio.
             </p>
           </div>
         </div>
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
-          <div *ngFor="let testimonial of testimonials; let i = index" 
-               class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1"
-               [ngClass]="{'md:col-span-2': i === 0}">
-            <div class="flex flex-col h-full">
-              <div class="flex-grow">
-                <svg class="h-8 w-8 text-sky-400 mb-4" fill="currentColor" viewBox="0 0 32 32">
-                  <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/>
-                </svg>
-                <p class="text-lg font-medium text-gray-900 mb-4">
-                  {{ testimonial.quote }}
-                </p>
-              </div>
-              <div class="flex items-center gap-4 mt-4">
-                <img [src]="testimonial.avatar" class="w-12 h-12 rounded-full object-cover" [alt]="'Foto de ' + testimonial.name">
-                <div>
-                  <p class="font-semibold text-gray-900">{{ testimonial.name }}</p>
-                  <p class="text-sm text-gray-600">{{ testimonial.position }}, {{ testimonial.company }}</p>
-                </div>
-              </div>
-            </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Drones Seguridad Automatizada</h3>
+            <p class="text-gray-600">Implementación de drones para mejorar la seguridad en tus instalaciones.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Drones Análisis de Infraestructura</h3>
+            <p class="text-gray-600">Uso de drones para realizar análisis y monitoreo de infraestructuras.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Sistema de Nómina</h3>
+            <p class="text-gray-600">Gestión eficiente de nómina y pagos para tu empresa.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">CRM Inmobiliario</h3>
+            <p class="text-gray-600">Sistema de gestión de relaciones con clientes para el sector inmobiliario.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Páginas Web</h3>
+            <p class="text-gray-600">Desarrollo de páginas web personalizadas para tu negocio.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Web Apps</h3>
+            <p class="text-gray-600">Aplicaciones web a medida para mejorar la eficiencia de tu empresa.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Asistente Virtual IA</h3>
+            <p class="text-gray-600">Implementación de asistentes virtuales para optimizar la atención al cliente.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Control de Inventarios</h3>
+            <p class="text-gray-600">Sistema para gestionar y controlar inventarios de manera eficiente.</p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+            <h3 class="text-xl font-bold">Menú Digital</h3>
+            <p class="text-gray-600">Solución para crear menús digitales interactivos para restaurantes.</p>
           </div>
         </div>
       </div>
     </section>
     
+    <section id="tecnologies" class="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-gray-100 to-white">
+    <div class="container px-4 md:px-6 mx-auto">
+      <div class="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+        <div class="space-y-2">
+          <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
+            Tecnologias
+          </div>
+        </div>
+        <div class="relative">
+          <div class="carousel">
+            <div class="carousel-inner flex overflow-x-auto space-x-6">
+              <div class="flex flex-col items-center">
+                <img src="https://angular.io/assets/images/logos/angular/angular.svg" alt="Angular" class="h-32 mb-2">
+                <span class="text-lg font-medium">Angular</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://w7.pngwing.com/pngs/717/111/png-transparent-mysql-round-logo-tech-companies-thumbnail.png" alt="MySQL" class="h-32 mb-2">
+                <span class="text-lg font-medium">MySQL</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://w7.pngwing.com/pngs/657/27/png-transparent-postgresql-original-wordmark-logo-icon-thumbnail.png" alt="PostgreSQL" class="h-32 mb-2">
+                <span class="text-lg font-medium">PostgreSQL</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://w7.pngwing.com/pngs/956/695/png-transparent-mongodb-original-wordmark-logo-icon-thumbnail.png" alt="MongoDB" class="h-32 mb-2">
+                <span class="text-lg font-medium">MongoDB</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://w7.pngwing.com/pngs/788/651/png-transparent-code-development-logo-nodejs-logos-icon-thumbnail.png" alt="Node.js" class="h-32 mb-2">
+                <span class="text-lg font-medium">Node.js</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://w7.pngwing.com/pngs/643/143/png-transparent-nextjs-hd-logo.png" alt="Next.js" class="h-32 mb-2">
+                <span class="text-lg font-medium">Next.js</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://logowik.com/content/uploads/images/vercel1868.jpg" alt="Vercel" class="h-32 mb-2">
+                <span class="text-lg font-medium">Vercel</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://download.logo.wine/logo/Cloudflare/Cloudflare-Logo.wine.png" alt="Cloudflare" class="h-32 mb-2">
+                <span class="text-lg font-medium">Cloudflare</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpJHZRESgeDFMUlYon3082iWr2REIgNULYSA&s" alt="Azure" class="h-32 mb-2">
+                <span class="text-lg font-medium">Azure</span>
+              </div>
+            </div>
+          </div>
+          <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow">❮</button>
+          <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow">❯</button>
+            </div>
+          </div>
+      </div>
+    </section>
+  
 
     <section id="cta" class="w-full py-12 md:py-24 lg:py-32 bg-[#f5f5f5]">
       <div class="container px-4 md:px-6">
@@ -233,7 +304,6 @@
         <div class="flex flex-col items-center justify-center space-y-4 text-center">
           <div class="space-y-2">
             <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
-             
               Precios
             </div>
             <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -385,7 +455,6 @@
       </div>
     </section>
     
-      
   </main>
 
   <footer class="py-8 md:py-12 lg:py-16 bg-gray-100">
