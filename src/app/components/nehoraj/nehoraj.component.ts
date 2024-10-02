@@ -113,6 +113,7 @@ export class NehorajComponent implements OnInit {
   ];
 
   menuOpen = false;
+  currentIndex = 0;
 
   constructor() {}
 
@@ -124,12 +125,26 @@ export class NehorajComponent implements OnInit {
     this.menuOpen = !this.menuOpen;
   }
 
+  // Method to move the carousel
+  moveCarousel(direction: number) {
+    const items = document.querySelectorAll('.carousel-item');
+    items[this.currentIndex].classList.remove('active');
+    
+    this.currentIndex = (this.currentIndex + direction + items.length) % items.length;
+    
+    items[this.currentIndex].classList.add('active');
+  
+    // Adjust the transform property to create a sliding effect
+    const carouselInner = document.querySelector('.carousel-inner') as HTMLElement;
+    carouselInner.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+  }  
+
   nombre: string = '';
   email: string = '';
   mensaje: string = '';
 
   sendWhatsAppMessage() {
-    const phoneNumber = '529811402316'; // Reemplaza con tu número de WhatsApp
+    const phoneNumber = '52'; // Reemplaza con tu número de WhatsApp
     const whatsappMessage = `Hola, mi nombre es ${this.nombre}. Mi correo electrónico es ${this.email}. ${this.mensaje}`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
