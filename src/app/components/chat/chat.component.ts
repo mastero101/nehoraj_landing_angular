@@ -22,9 +22,10 @@ interface ChatMessage {
 export class ChatComponent {
   @Input() isVisible: boolean = false;
   @Output() closeChat = new EventEmitter<void>();
-
+  
   messages: ChatMessage[] = [];
   newMessage: string = '';
+  isLoading: boolean = false;
   
   constructor(private openaiService: OpenaiService) {
     this.addWelcomeMessage();
@@ -37,7 +38,9 @@ export class ChatComponent {
   async sendMessage() {
     if (this.newMessage.trim()) {
       this.addMessage(this.newMessage, true);
+      this.isLoading = true;
       const aiResponse = await this.getAIResponse(this.newMessage);
+      this.isLoading = false;
       this.addMessage(aiResponse, false);
       this.newMessage = '';
     }
