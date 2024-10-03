@@ -1,22 +1,15 @@
-.chat-container {
-  display: none;
-  flex-direction: column;
-  max-height: 80vh;
-  z-index: 1000;
-}
-
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .chat-body {
-  flex: 1;
-  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
 }
-
-.chat-footer {
-  display: flex;
-  align-items: center;
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-body::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+  border: transparent;
 }
