@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms'; 
+import { ChatComponent } from '../chat/chat.component';
 
 @Component({
   selector: 'app-nehoraj',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule 
+    FormsModule,
+    ChatComponent
   ],
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
@@ -114,6 +116,7 @@ export class NehorajComponent implements OnInit {
 
   menuOpen = false;
   currentIndex = 0;
+  isChatVisible: boolean = false;
 
   constructor() {}
 
@@ -123,6 +126,10 @@ export class NehorajComponent implements OnInit {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleChat() {
+    this.isChatVisible = !this.isChatVisible;
   }
 
   // Method to move the carousel
