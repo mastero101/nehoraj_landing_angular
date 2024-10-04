@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms'; 
 import { ChatComponent } from '../chat/chat.component';
-import { MisionVisionComponent } from '../../mision-vision/mision-vision.component';
+import { MisionVisionComponent } from '../mision-vision/mision-vision.component';
 
 @Component({
   selector: 'app-nehoraj',

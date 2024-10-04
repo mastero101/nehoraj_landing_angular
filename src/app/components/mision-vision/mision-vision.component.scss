@@ -1,0 +1,45 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: #f9fafb; // Cambiado a un gris claro para un fondo más suave
+  border-radius: 0.75rem; // Aumentado para esquinas más redondeadas
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra más pronunciada
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); // Efecto hover para mayor profundidad
+  }
+}
+
+h2 {
+  font-size: 2.5rem; // Tamaño de fuente aumentado
+  font-weight: bold;
+  margin-bottom: 1.5rem; // Mayor espaciado inferior
+  color: #1f2937; // Color más oscuro para mejor contraste
+  border-bottom: 2px solid #e5e7eb; // Línea inferior para separación
+  padding-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.5rem; // Tamaño de fuente aumentado
+  font-weight: 600;
+  margin-bottom: 1rem; // Mayor espaciado inferior
+  color: #374151; // Color más oscuro para mejor contraste
+}
+
+p {
+  color: #4b5563; // Color más oscuro para mejor legibilidad
+  line-height: 1.8; // Mayor interlineado para mejor legibilidad
+  margin-bottom: 1.5rem;
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 2rem; // Mayor sangría
+  color: #4b5563;
+
+  li {
+    margin-bottom: 0.75rem; // Mayor espaciado entre elementos
+  }
+}
+
