@@ -188,3 +188,32 @@
     right: 2rem;
   }
 }
+
+.close-btn {
+  position: absolute;
+  top: 4em;
+  right: 1rem;
+  background: #ff5c5c;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #ff1c1c;
+  }
+  
+}
+
+@media (max-width: 768px) {
+  .close-btn {
+    top: 13.5em;
+  }
+}

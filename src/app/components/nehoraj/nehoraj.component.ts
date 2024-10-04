@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms'; 
 import { ChatComponent } from '../chat/chat.component';
+import { MisionVisionComponent } from '../../mision-vision/mision-vision.component';
 
 @Component({
   selector: 'app-nehoraj',
@@ -9,7 +10,8 @@ import { ChatComponent } from '../chat/chat.component';
   imports: [
     CommonModule,
     FormsModule,
-    ChatComponent
+    ChatComponent,
+    MisionVisionComponent
   ],
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
@@ -117,6 +119,7 @@ export class NehorajComponent implements OnInit {
   menuOpen = false;
   currentIndex = 0;
   isChatVisible: boolean = false;
+  isModalOpen = false;
 
   constructor() {}
 
@@ -130,6 +133,10 @@ export class NehorajComponent implements OnInit {
 
   toggleChat() {
     this.isChatVisible = !this.isChatVisible;
+  }
+
+  toggleModal() {
+    this.isModalOpen = !this.isModalOpen;
   }
 
   // Method to move the carousel

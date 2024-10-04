@@ -32,6 +32,9 @@
       <a href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Servicios
       </a>
+      <button (click)="toggleModal()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
+        Misión y Visión
+      </button>
       <a href="#solutions" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Soluciones
       </a>
@@ -46,12 +49,24 @@
   
   <nav class="md:hidden transition-all duration-300 ease-in-out" [class.hidden]="!menuOpen">
     <a href="#features" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
+    <a (click)="toggleModal()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
+      Misión y Visión
+    </a>
     <a href="#solutions" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Soluciones</a>
     <a href="#pricing" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Precios</a>
     <a href="#contact" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Contacto</a>
   </nav>
 
   <main class="flex-1">
+
+    <div class="modal" [class.hidden]="!isModalOpen">
+      <div class="modal-content">
+        <button class="close-btn" (click)="toggleModal()">×</button>
+        <div class="modal-body">
+          <app-mision-vision></app-mision-vision>
+        </div>
+      </div>
+    </div>
 
     <section id="starting" class="w-full py-12 md:py-24 lg:py-32 xl:py-0">
       <div class="container px-4 md:px-8">
@@ -203,6 +218,13 @@
             <h3 class="text-xl font-bold">Drones Seguridad Automatizada</h3>
             <p class="text-gray-600">Implementación de drones para mejorar la seguridad en tus instalaciones.</p>
           </div>
+          <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 flex flex-col">
+            <img src="../../../assets/solutions/mini-rovs-marinos.jpeg" alt="Mini ROVs Marinos" class="h-32 w-full object-cover rounded-md mb-4">
+            <h3 class="text-xl font-bold">Mini ROVs Marinos</h3>
+            <p class="text-gray-600">
+              Pequeños drones marinos diseñados para patrullaje y análisis de infraestructuras bajo el agua.
+            </p>
+          </div>          
           <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 flex flex-col">
             <img src="../../../assets/solutions/droninfraestruc.jpeg" alt="Drones Análisis de Infraestructura" class="h-32 w-full object-cover rounded-md mb-4">
             <h3 class="text-xl font-bold">Drones Análisis de Infraestructura</h3>
@@ -410,10 +432,12 @@
               <img src="../../../assets/img/cofounder-1.png" alt="">
             </div>
             <h2 class="text-md font-semibold">Andres Garcia</h2>
-            <h3 class="text-xl font-semibold">Fundador & Asesor Comercial</h3>
+            <h3 class="text-xl font-semibold">Founder & CEO</h3>
             <p class="mt-2 text-gray-600">
-              Es un emprendedor apasionado con una visión clara para el crecimiento empresarial. 
-              Su experiencia y liderazgo han sido fundamentales para establecer y expandir Nehoraj.
+              En sus 8 años de experiencia como asesor comercial y desarrollo de negocios, su 
+              visión clara ha sido clave para establecer y expandir Nehoraj. Su enfoque innovador 
+              y liderazgo inspirador han impulsado el crecimiento sostenible de la empresa, 
+              posicionándola como un referente en el sector.
             </p>
           </div>
           <div class="p-6 bg-white rounded-lg shadow-md text-center">
