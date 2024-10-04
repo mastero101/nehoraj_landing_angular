@@ -139,7 +139,13 @@ export class NehorajComponent implements OnInit {
     this.isModalOpen = !this.isModalOpen;
   }
 
-  // Method to move the carousel
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.isModalOpen === false) {
+      this.isModalOpen = true;
+    }
+  }
+
   moveCarousel(direction: number) {
     const items = document.querySelectorAll('.carousel-item');
     items[this.currentIndex].classList.remove('active');
@@ -148,7 +154,6 @@ export class NehorajComponent implements OnInit {
     
     items[this.currentIndex].classList.add('active');
   
-    // Adjust the transform property to create a sliding effect
     const carouselInner = document.querySelector('.carousel-inner') as HTMLElement;
     carouselInner.style.transform = `translateX(-${this.currentIndex * 100}%)`;
   }  

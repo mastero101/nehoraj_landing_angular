@@ -60,7 +60,7 @@
   <main class="flex-1">
 
     <div class="modal" [class.hidden]="!isModalOpen">
-      <div class="modal-content">
+      <div class="modal-content pb-2">
         <button class="close-btn" (click)="toggleModal()">×</button>
         <div class="modal-body">
           <app-mision-vision></app-mision-vision>
@@ -370,6 +370,32 @@
       </div>
     </section>
 
+    <section id="aliados" class="w-full py-8 md:py-16 lg:py-6 bg-[#f5f5f5]">
+      <div class="container px-4 md:px-6">
+        <div class="flex flex-col items-center justify-center space-y-4 text-center mb-8">
+          <div class="space-y-2">
+            <div class="inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
+              Aliados
+            </div>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-800">Nuestros Aliados Estratégicos</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:scale-105">
+            <img src="../../../assets/alies/solticom_drones.jpg" alt="Drones Marinos" class="w-full h-48 object-contain rounded-t-lg">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold mb-2 text-black-600">Hello SOLTICOM</h3>
+              <p class="text-gray-700 leading-relaxed">
+                Hello SOLTICOM se especializa en la inspección de infraestructura y terrenos utilizando vehículos marinos ROV, ofreciendo soluciones innovadoras para el monitoreo y análisis de ambientes acuáticos.
+              </p>
+            </div>
+          </div>
+          <!-- Puedes agregar más tarjetas de aliados aquí -->
+        </div>
+      </div>
+    </section>
+
+    <!--
     <section id="pricing" class="w-full py-12 md:py-24 lg:py-32 bg-[#f5f5f5]">
       <div class="container px-4 md:px-6">
         <div class="flex flex-col items-center justify-center space-y-4 text-center">
@@ -420,6 +446,7 @@
         </div>
       </div>
     </section>
+    -->
 
     <section id="team" class="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
       <div class="container px-4 md:px-8">
@@ -567,6 +594,11 @@
               >
                 Servicios
               </a>
+            </li>
+            <li>
+              <button (click)="scrollToTop()" class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out">
+                Misión y Visión
+              </button>
             </li>
             <li>
               <a
