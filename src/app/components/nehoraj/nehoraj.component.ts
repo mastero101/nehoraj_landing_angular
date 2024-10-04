@@ -151,7 +151,7 @@ export class NehorajComponent implements OnInit {
   mensaje: string = '';
 
   sendWhatsAppMessage() {
-    const phoneNumber = '52'; // Reemplaza con tu número de WhatsApp
+    const phoneNumber = '525637955283'; // Reemplaza con tu número de WhatsApp
     const whatsappMessage = `Hola, mi nombre es ${this.nombre}. Mi correo electrónico es ${this.email}. ${this.mensaje}`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
