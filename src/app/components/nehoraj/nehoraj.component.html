@@ -32,6 +32,9 @@
       <a href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Servicios
       </a>
+      <button (click)="toggleModal2()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
+        Responsabilidad Social
+      </button>
       <button (click)="toggleModal()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-400 transition-colors duration-300">
         Misión y Visión
       </button>
@@ -49,6 +52,9 @@
   
   <nav class="md:hidden transition-all duration-300 ease-in-out" [class.hidden]="!menuOpen">
     <a href="#features" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
+    <a (click)="toggleModal2()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
+      Responsabilidad Social
+    </a>
     <a (click)="toggleModal()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
       Misión y Visión
     </a>
@@ -64,6 +70,15 @@
         <button class="close-btn" (click)="toggleModal()">×</button>
         <div class="modal-body">
           <app-mision-vision></app-mision-vision>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" [class.hidden]="!isModalOpen2">
+      <div class="modal-content pb-2">
+        <button class="close-btn" (click)="toggleModal2()">×</button>
+        <div class="modal-body">
+          <app-social-respons></app-social-respons>
         </div>
       </div>
     </div>
@@ -594,6 +609,11 @@
               >
                 Servicios
               </a>
+            </li>
+            <li>
+              <button (click)="scrollToTop2()" class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out">
+                Responsabilidad Social
+              </button>
             </li>
             <li>
               <button (click)="scrollToTop()" class="text-sm font-medium text-gray-600 hover:text-sky-500 transition-colors duration-300 ease-in-out">

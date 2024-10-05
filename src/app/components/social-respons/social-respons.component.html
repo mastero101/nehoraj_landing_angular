@@ -1,0 +1,32 @@
+<div class="responsabilidad-social">
+    <h1 class="text-2xl font-bold mb-4">Nuestra Responsabilidad Social</h1>
+    <p class="mb-8">
+      En nuestra empresa, creemos en el impacto positivo que podemos generar
+      en la sociedad a través de nuestras acciones y campañas de
+      responsabilidad social.
+    </p>
+    <div class="tarjetas-campañas grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let campania of campanias" class="tarjeta p-4 border rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">{{ campania.titulo }}</h2>
+        <p class="mb-4">{{ campania.descripcion }}</p>
+  
+        <!-- Ajuste del carrusel -->
+        <div class="relative overflow-hidden">
+          <div class="flex transition-transform duration-500" [style.transform]="'translateX(-' + currentIndex[campania.id] * 100 + '%)'">
+            <img *ngFor="let imagen of campania.imagenes" [src]="imagen" alt="Imagen de {{ campania.titulo }}" class="w-full carousel-img" (click)="openModal(imagen)">
+          </div>
+          
+          <!-- Botones de navegación -->
+          <button (click)="prevSlide(campania.id)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2">‹</button>
+          <button (click)="nextSlide(campania.id)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2">›</button>
+        </div>
+
+                <!-- Modal -->
+        <div class="modal" [ngClass]="{'show': isModalOpen}">
+            <span class="close" (click)="closeModal()">&times;</span>
+            <img [src]="modalImage" class="modal-content">
+        </div>
+      </div>
+    </div>
+  </div>
+  
