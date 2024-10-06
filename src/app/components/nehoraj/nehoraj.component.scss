@@ -123,6 +123,18 @@
   transform: scaleX(1);
 }
 
+.technologies-container {
+  max-width: 800px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .carousel {
   position: relative;
   overflow: hidden;
@@ -173,6 +185,15 @@
 .carousel-control-prev:hover,
 .carousel-control-next:hover {
   background-color: rgba(255, 255, 255, 1);
+}
+
+@media (max-width: 768px) {
+  .carousel img {
+    height: 24;
+  }
+  .carousel-item {
+    padding: 2rem;
+  }
 }
 
 #chat-bubble {
