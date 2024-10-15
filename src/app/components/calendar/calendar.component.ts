@@ -26,7 +26,7 @@ export class CalendarComponent implements OnInit {
     email: '',
     phone: ''
   };
-  calendarDays: Date[] = [];
+  calendarDays: CalendarDay[] = [];
 
   constructor(private googleCalendarService: GoogleCalendarService) {
     this.generateDaysInMonth();
@@ -35,6 +35,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.loadEvents();
+    this.loadReservations(); // Cargar reservas al iniciar
   }
 
   loadEvents() {
@@ -51,19 +52,19 @@ export class CalendarComponent implements OnInit {
     // Añadir días del mes anterior para completar la primera semana
     const firstDayOfWeek = firstDay.getDay();
     for (let i = firstDayOfWeek; i > 0; i--) {
-      const prevMonthDay = new Date(this.currentYear, this.currentMonth, 1 - i);
+      const prevMonthDay = new Date(this.currentYear, this.currentMonth, 1 - i) as CalendarDay;
       this.calendarDays.push(prevMonthDay);
     }
 
     // Añadir días del mes actual
     for (let d = firstDay; d <= lastDay; d.setDate(d.getDate() + 1)) {
-      this.calendarDays.push(new Date(d));
+      this.calendarDays.push(new Date(d) as CalendarDay);
     }
 
     // Añadir días del mes siguiente para completar la última semana
     const lastDayOfWeek = lastDay.getDay();
     for (let i = 1; i < 7 - lastDayOfWeek; i++) {
-      const nextMonthDay = new Date(this.currentYear, this.currentMonth + 1, i);
+      const nextMonthDay = new Date(this.currentYear, this.currentMonth + 1, i) as CalendarDay;
       this.calendarDays.push(nextMonthDay);
     }
   }
@@ -98,7 +99,7 @@ export class CalendarComponent implements OnInit {
 
   getEventsForDay(day: Date) {
     return this.events.filter(event => {
-      const eventDate = new Date(event.start);
+      const eventDate = new Date(event.date); // Asegúrate de que estás usando el campo correcto
       return eventDate.toDateString() === day.toDateString();
     });
   }
@@ -136,9 +137,22 @@ export class CalendarComponent implements OnInit {
   }
 
   isTimeSlotAvailable(timeSlot: string): boolean {
-    // Implementa la lógica para verificar si el horario está disponible
-    // Esto dependerá de cómo estés manejando las reservas en tu aplicación
-    return true; // Por ahora, asumimos que todos los horarios están disponibles
+    if (!this.selectedDay) return true; // Si no hay un día seleccionado, consideramos que el horario está disponible
+
+    const reservationDate = new Date(this.selectedDay);
+    const [hours, minutes] = timeSlot.split(':');
+    reservationDate.setHours(parseInt(hours), parseInt(minutes));
+
+    // Verificar si el horario está ocupado
+    const isAvailable = !this.events.some(event => {
+        const eventStart = new Date(event.date);
+        const eventTimeSlot = new Date(eventStart);
+        eventTimeSlot.setHours(parseInt(event.timeSlot.split(':')[0]), parseInt(event.timeSlot.split(':')[1]));
+
+        return eventTimeSlot.getTime() === reservationDate.getTime();
+    });
+
+    return isAvailable;
   }
 
   reserveTimeSlot(timeSlot: string) {
@@ -147,15 +161,24 @@ export class CalendarComponent implements OnInit {
       const [hours, minutes] = timeSlot.split(':');
       reservationDate.setHours(parseInt(hours), parseInt(minutes));
 
-      // Aquí implementarías la lógica para crear la reserva
-      this.googleCalendarService.createEvent({
-        summary: 'Nueva Reserva',
-        start: reservationDate,
-        end: new Date(reservationDate.getTime() + 60*60*1000) // Asumimos reservas de 1 hora
-      }).subscribe(() => {
-        this.loadEvents(); // Recarga los eventos después de crear la reserva
-        this.closeDayModal();
-      });
+      // Crear la nueva reserva
+      const newReservation = {
+        date: reservationDate.toISOString(), // Asegúrate de que el formato sea correcto
+        timeSlot: timeSlot,
+        name: this.reservationData.name,
+        email: this.reservationData.email,
+        phone: this.reservationData.phone
+      };
+
+      // Guardar la nueva reserva en localStorage
+      const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+      reservations.push(newReservation);
+      localStorage.setItem('reservations', JSON.stringify(reservations));
+
+      // Actualizar el estado de eventos y la vista
+      this.events.push(newReservation); // Agregar la nueva reserva a los eventos
+      this.updateCalendarDays(); // Actualizar el estado de los días en el calendario
+      this.closeDayModal(); // Cierra el modal
     }
   }
 
@@ -181,7 +204,17 @@ export class CalendarComponent implements OnInit {
   }
 
   submitReservation() {
-    // Aquí puedes implementar la lógica para enviar la reservación
+    // Guardar la reservación en el localStorage
+    const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+    reservations.push({
+        date: this.selectedDay,
+        timeSlot: this.selectedTimeSlot,
+        name: this.reservationData.name,
+        email: this.reservationData.email,
+        phone: this.reservationData.phone
+    });
+    localStorage.setItem('reservations', JSON.stringify(reservations));
+
     console.log('Reservación enviada:', this.reservationData);
     // Después de enviar la reservación, cierra el modal y reinicia los datos
     this.closeReservationModal();
@@ -194,4 +227,24 @@ export class CalendarComponent implements OnInit {
       phone: ''
     };
   }
+
+  // Método para cargar reservas desde localStorage al iniciar
+  loadReservations() {
+    const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+    console.log('Reservas cargadas:', reservations); // Verifica que las reservas se carguen correctamente
+    this.events = reservations;
+    this.updateCalendarDays();
+  }
+
+  updateCalendarDays() {
+    this.calendarDays.forEach((day: CalendarDay) => {
+        const dayReservations = this.getEventsForDay(day);
+        day.isOccupied = dayReservations.length > 0; // Marcar el día como ocupado si tiene reservas
+    });
+  }
+}
+
+// Definir un tipo que extienda Date para incluir isOccupied
+interface CalendarDay extends Date {
+    isOccupied?: boolean; // Propiedad opcional
 }
