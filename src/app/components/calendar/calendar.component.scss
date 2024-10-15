@@ -165,3 +165,360 @@
     font-size: 0.9em;
   }
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    h2 {
+      color: #333333;
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .time-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .time-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f8f9fa;
+      padding: 0.5rem;
+      border-radius: 4px;
+
+      span {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      button {
+        width: 100%;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem;
+
+        &:not(.reserved) {
+          background-color: #007bff;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: #0056b3;
+          }
+        }
+
+        &.reserved {
+          background-color: #6c757d;
+          color: white;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .close-button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1rem;
+
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    .modal-content {
+      padding: 1.5rem;
+
+      .time-slots-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .time-slot {
+        padding: 0.4rem;
+
+        button {
+          font-size: 0.8rem;
+        }
+      }
+
+      .close-button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.time-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.time-slot span {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.time-slot button {
+  width: 100%;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.time-slot button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.time-slot button.reserved {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.close-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .modal-content {
+    padding: 15px;
+  }
+  
+  .time-slot {
+    padding: 8px;
+  }
+  
+  .time-slot button {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .modal-content {
+    padding: 10px;
+    width: 95%;
+  }
+  
+  .modal-content h2 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+  
+  .time-slot {
+    padding: 5px;
+  }
+  
+  .time-slot span {
+    font-size: 0.9em;
+  }
+  
+  .time-slot button {
+    padding: 6px;
+    font-size: 0.8em;
+  }
+  
+  .close-button {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+}
+
+.reservation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  &-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%;
+
+    h2 {
+      color: #333333;
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    p {
+      color: #666666;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    form {
+      margin-top: 1rem;
+    }
+  }
+}
+
+.reservation-form-group {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333333;
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+  }
+}
+
+.reservation-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+
+    &[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+
+      &:hover {
+        background-color: #45a049;
+      }
+    }
+
+    &[type="button"] {
+      background-color: #f44336;
+      color: white;
+
+      &:hover {
+        background-color: #da190b;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .reservation-modal-content {
+    padding: 1.5rem;
+
+    h2 {
+      font-size: 1.3rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .reservation-form-group {
+    input {
+      font-size: 0.9rem;
+    }
+  }
+
+  .reservation-button-group {
+    button {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+}
