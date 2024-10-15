@@ -1,0 +1,22 @@
+<div class="calendar-container">
+    <h2 class="calendar-title">Calendario de Reservas</h2>
+    <div class="calendar-navigation">
+        <button (click)="previousMonth()" class="nav-button">&lt; Anterior</button>
+        <div class="current-month-year">
+            <div>{{ currentMonthYear }}</div>
+        </div>
+        <button (click)="nextMonth()" class="nav-button">Siguiente &gt;</button>
+    </div>
+    <div class="calendar-grid">
+        <div class="calendar-weekday" *ngFor="let day of weekDays">{{ day }}</div>
+        <div class="calendar-day" *ngFor="let day of daysInMonth" [ngClass]="{'today': isToday(day), 'other-month': !isCurrentMonth(day)}">
+            {{ day.getDate() }}
+            <div class="available-space" *ngIf="hasAvailableSpace(day)">
+                Espacio Disponible
+            </div>
+            <div class="event" *ngFor="let event of getEventsForDay(day)">
+                {{ event.summary }}
+            </div>
+        </div>
+    </div>
+</div>

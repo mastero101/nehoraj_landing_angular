@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatComponent } from '../chat/chat.component';
 import { MisionVisionComponent } from '../mision-vision/mision-vision.component';
 import { SocialResponsComponent } from '../social-respons/social-respons.component';
+import { CalendarComponent } from '../calendar/calendar.component';
 
 @Component({
   selector: 'app-nehoraj',
@@ -13,7 +14,8 @@ import { SocialResponsComponent } from '../social-respons/social-respons.compone
     FormsModule,
     ChatComponent,
     MisionVisionComponent,
-    SocialResponsComponent
+    SocialResponsComponent,
+    CalendarComponent
   ],
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
@@ -123,6 +125,7 @@ export class NehorajComponent implements OnInit {
   isChatVisible: boolean = false;
   isModalOpen = false;
   isModalOpen2 = false;
+  isModalOpen3 = false;
 
   constructor() {}
 
@@ -145,6 +148,10 @@ export class NehorajComponent implements OnInit {
   toggleModal2() {
     this.isModalOpen2 = !this.isModalOpen2;
     this.isModalOpen = false;
+  }
+
+  toggleModal3() {
+    this.isModalOpen3 = !this.isModalOpen3;
   }
 
   scrollToTop(): void {

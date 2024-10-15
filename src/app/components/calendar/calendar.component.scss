@@ -1,0 +1,167 @@
+.calendar-container {
+  max-width: 100%;
+  padding: 10px;
+}
+
+.calendar-title {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.calendar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-weekday,
+.calendar-day {
+  text-align: center;
+  padding: 5px;
+  font-size: 0.9em;
+  border: 1px solid #e0e0e0;
+}
+
+.calendar-weekday {
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.calendar-day {
+  height: auto;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+
+  &.today {
+    background-color: #e8f5e9;
+    font-weight: bold;
+  }
+
+  &.other-month {
+    color: #bdbdbd;
+  }
+}
+
+.available-space {
+  background-color: #28a745;
+  color: white;
+  padding: 2px 4px;
+  margin-top: 0px;
+  border-radius: 3px;
+  font-size: 0.7em;
+}
+
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .calendar-day {
+    min-height: 60px;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-container {
+    padding: 5px;
+  }
+
+  .calendar-grid {
+    gap: 2px;
+  }
+
+  .calendar-weekday,
+  .calendar-day {
+    padding: 2px;
+    font-size: 0.8em;
+  }
+
+  .calendar-day {
+    min-height: 40px;
+  }
+
+  .available-space {
+    font-size: 0.6em;
+    padding: 1px 2px;
+  }
+
+  .calendar-navigation {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-button {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    min-width: 70px;
+    margin: 2px;
+  }
+
+  .current-month-year {
+    width: 100%;
+    order: -1;
+    margin-bottom: 5px;
+  }
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.nav-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  min-width: 100px; // Asegura un ancho mínimo para los botones
+}
+
+.nav-button:hover {
+  background-color: #0056b3;
+}
+
+.current-month-year {
+  text-align: center;
+  font-weight: bold;
+  flex: 1;
+  padding: 0 10px;
+  max-width: 200px; // Aumentamos el ancho máximo
+  overflow: hidden; // Oculta el texto que se desborde
+  white-space: nowrap; // Evita que el texto se divida en múltiples líneas
+  text-overflow: ellipsis; // Agrega puntos suspensivos si el texto es demasiado largo
+}
+
+@media (max-width: 480px) {
+  .nav-button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    min-width: 80px;
+  }
+
+  .current-month-year {
+    font-size: 0.9em;
+  }
+}
