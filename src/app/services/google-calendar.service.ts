@@ -1,4 +1,3 @@
-// src/app/components/calendar/google-calendar.mock.service.ts
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
