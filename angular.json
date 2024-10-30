@@ -39,7 +39,12 @@
             "prerender": true,
             "ssr": {
               "entry": "server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "form-data",
+              "proxy-from-env",
+              "follow-redirects"
+            ]
           },
           "configurations": {
             "production": {
