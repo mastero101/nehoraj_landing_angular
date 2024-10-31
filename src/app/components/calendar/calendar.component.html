@@ -23,6 +23,9 @@
 <!-- Modal para las reservas del día -->
 <div class="modal" *ngIf="selectedDay">
     <div class="modal-content">
+        <button class="close-button" (click)="closeDayModal()">
+            <span>&times;</span>
+        </button>
         <h2>Reservas para el {{ formatDateToSpanish(selectedDay) }}</h2>
         <div class="time-slots-grid">
             <div *ngFor="let timeSlot of timeSlots; let i = index" class="time-slot">
@@ -35,7 +38,6 @@
                 </button>
             </div>
         </div>
-        <button class="close-button" (click)="closeDayModal()">Cerrar</button>
     </div>
 </div>
 
