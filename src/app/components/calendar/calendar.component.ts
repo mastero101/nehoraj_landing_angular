@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GoogleCalendarService } from '../../services/google-calendar.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-calendar',
@@ -18,7 +19,10 @@ export class CalendarComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
   currentMonthYear: string = '';
   selectedDay: Date | null = null;
-  timeSlots: string[] = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
+  timeSlots: string[] = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00',
+    '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'
+  ];
   showReservationModal: boolean = false;
   selectedTimeSlot: string = '';
   reservationData = {
@@ -28,14 +32,19 @@ export class CalendarComponent implements OnInit {
   };
   calendarDays: CalendarDay[] = [];
 
-  constructor(private googleCalendarService: GoogleCalendarService) {
+  constructor(
+    private googleCalendarService: GoogleCalendarService,
+    private notificationService: NotificationService
+  ) {
     this.generateDaysInMonth();
     this.updateCurrentMonthYear();
+    this.initializeTimeSlots();
   }
 
   ngOnInit() {
     this.loadEvents();
-    this.loadReservations(); // Cargar reservas al iniciar
+    this.loadReservations();
+    this.initializeTimeSlots();
   }
 
   loadEvents() {
@@ -83,7 +92,7 @@ export class CalendarComponent implements OnInit {
     }
     this.generateDaysInMonth();
     this.updateCurrentMonthYear();
-    this.loadEvents();
+    this.initializeTimeSlots();
   }
 
   nextMonth() {
@@ -94,7 +103,7 @@ export class CalendarComponent implements OnInit {
     }
     this.generateDaysInMonth();
     this.updateCurrentMonthYear();
-    this.loadEvents();
+    this.initializeTimeSlots();
   }
 
   getEventsForDay(day: Date) {
@@ -129,11 +138,13 @@ export class CalendarComponent implements OnInit {
 
   openDayModal(day: Date) {
     this.selectedDay = day;
-    // Aquí podrías cargar las reservas específicas para este día
+    this.initializeTimeSlots();
   }
 
   closeDayModal() {
     this.selectedDay = null;
+    this.selectedTimeSlot = '';
+    this.initializeTimeSlots();
   }
 
   isTimeSlotAvailable(timeSlot: string): boolean {
@@ -203,21 +214,76 @@ export class CalendarComponent implements OnInit {
     this.resetReservationData();
   }
 
-  submitReservation() {
-    // Guardar la reservación en el localStorage
-    const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
-    reservations.push({
+  async submitReservation() {
+    if (!this.selectedDay || !this.reservationData.phone) {
+      console.error('Faltan datos necesarios');
+      return;
+    }
+
+    try {
+      // Crear el mensaje de confirmación
+      const message = `¡Hola ${this.reservationData.name}! 
+        Tu reserva ha sido confirmada:
+        📅 Fecha: ${this.formatDateToSpanish(this.selectedDay)}
+        ⏰ Hora: ${this.selectedTimeSlot}
+
+        Gracias por tu reserva. Si necesitas hacer cambios, por favor contáctanos.`;
+
+      // Formatear el número de teléfono (asegurarse que incluya código de país)
+      const formattedPhone = this.formatPhoneNumber(this.reservationData.phone);
+
+      // Enviar WhatsApp
+      await this.notificationService.sendWhatsAppMeta(
+        formattedPhone,
+        message
+      );
+
+      // Enviar SMS
+      await this.notificationService.sendWhatsAppTwilio(
+        formattedPhone,
+        message
+      );
+
+      // Guardar la reservación
+      const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+      reservations.push({
         date: this.selectedDay,
         timeSlot: this.selectedTimeSlot,
         name: this.reservationData.name,
         email: this.reservationData.email,
         phone: this.reservationData.phone
-    });
-    localStorage.setItem('reservations', JSON.stringify(reservations));
+      });
+      localStorage.setItem('reservations', JSON.stringify(reservations));
 
-    console.log('Reservación enviada:', this.reservationData);
-    // Después de enviar la reservación, cierra el modal y reinicia los datos
-    this.closeReservationModal();
+      // Actualizar la vista
+      this.events = reservations;
+      this.updateCalendarDays();
+      
+      // Cerrar el modal y mostrar mensaje de éxito
+      this.closeReservationModal();
+      alert('¡Reserva confirmada! Se ha enviado un mensaje de confirmación.');
+    } catch (error) {
+      console.error('Error al procesar la reserva:', error);
+      alert('Hubo un error al procesar la reserva. Por favor, intenta nuevamente.');
+    }
+  }
+
+  // Función auxiliar para formatear números de teléfono
+  private formatPhoneNumber(phone: string): string {
+    // Eliminar espacios y caracteres especiales
+    let cleaned = phone.replace(/\D/g, '');
+    
+    // Agregar código de país si no lo tiene
+    if (!cleaned.startsWith('52')) { // Para México, ajusta según tu país
+      cleaned = '52' + cleaned;
+    }
+    
+    // Asegurarse que empiece con +
+    if (!cleaned.startsWith('+')) {
+      cleaned = '+' + cleaned;
+    }
+    
+    return cleaned;
   }
 
   resetReservationData() {
@@ -241,6 +307,13 @@ export class CalendarComponent implements OnInit {
         const dayReservations = this.getEventsForDay(day);
         day.isOccupied = dayReservations.length > 0; // Marcar el día como ocupado si tiene reservas
     });
+  }
+
+  private initializeTimeSlots() {
+    this.timeSlots = [
+      '09:00', '10:00', '11:00', '12:00', '13:00', '14:00',
+      '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'
+    ];
   }
 }
 

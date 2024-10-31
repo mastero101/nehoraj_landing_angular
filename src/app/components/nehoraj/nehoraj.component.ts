@@ -127,6 +127,8 @@ export class NehorajComponent implements OnInit {
   isModalOpen2 = false;
   isModalOpen3 = false;
 
+  showNewLocation = false;
+
   constructor() {}
 
   ngOnInit() {
@@ -152,6 +154,10 @@ export class NehorajComponent implements OnInit {
 
   toggleModal3() {
     this.isModalOpen3 = !this.isModalOpen3;
+  }
+
+  toggleNewLocation() {
+    this.showNewLocation = !this.showNewLocation;
   }
 
   scrollToTop(): void {

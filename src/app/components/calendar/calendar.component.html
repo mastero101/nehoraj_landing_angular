@@ -22,20 +22,21 @@
 
 <!-- Modal para las reservas del día -->
 <div class="modal" *ngIf="selectedDay">
-  <div class="modal-content">
-    <h2>Reservas para el {{ formatDateToSpanish(selectedDay) }}</h2>
-    <div class="time-slots-grid">
-      <div *ngFor="let timeSlot of timeSlots" class="time-slot">
-        <span>{{ timeSlot }}</span>
-        <button [ngClass]="{'reserved': !isTimeSlotAvailable(timeSlot)}" 
-                (click)="openReservationModal(timeSlot)" 
-                [disabled]="!isTimeSlotAvailable(timeSlot)">
-          {{ isTimeSlotAvailable(timeSlot) ? 'Reservar' : 'Reservado' }}
-        </button>
-      </div>
+    <div class="modal-content">
+        <h2>Reservas para el {{ formatDateToSpanish(selectedDay) }}</h2>
+        <div class="time-slots-grid">
+            <div *ngFor="let timeSlot of timeSlots; let i = index" class="time-slot">
+                <span>{{ timeSlot }}</span>
+                <button 
+                    [ngClass]="{'reserved': !isTimeSlotAvailable(timeSlot)}" 
+                    (click)="openReservationModal(timeSlot)" 
+                    [disabled]="!isTimeSlotAvailable(timeSlot)">
+                    {{ isTimeSlotAvailable(timeSlot) ? 'Reservar' : 'Reservado' }}
+                </button>
+            </div>
+        </div>
+        <button class="close-button" (click)="closeDayModal()">Cerrar</button>
     </div>
-    <button class="close-button" (click)="closeDayModal()">Cerrar</button>
-  </div>
 </div>
 
 <!-- Nuevo modal para realizar la reservación -->
@@ -44,22 +45,61 @@
     <h2>Realizar Reservación</h2>
     <p>Fecha: {{ formatDateToSpanish(selectedDay!) }}</p>
     <p>Hora: {{ selectedTimeSlot }}</p>
-    <form (ngSubmit)="submitReservation()">
+    <form (ngSubmit)="submitReservation()" #reservationForm="ngForm">
       <div class="reservation-form-group">
         <label for="name">Nombre:</label>
-        <input type="text" id="name" [(ngModel)]="reservationData.name" name="name" required>
+        <input 
+          type="text" 
+          id="name" 
+          [(ngModel)]="reservationData.name" 
+          name="name" 
+          required
+          #name="ngModel">
+        <span class="error" *ngIf="name.invalid && name.touched">
+          El nombre es requerido
+        </span>
       </div>
+      
+      <div class="reservation-form-group">
+        <label for="phone">Teléfono (con código de país):</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          [(ngModel)]="reservationData.phone" 
+          name="phone" 
+          required
+          pattern="^\+?[1-9]\d{1,14}$"
+          placeholder="+52 1234567890"
+          #phone="ngModel">
+        <span class="error" *ngIf="phone.invalid && phone.touched">
+          Ingresa un número válido con código de país
+        </span>
+      </div>
+
       <div class="reservation-form-group">
         <label for="email">Correo electrónico:</label>
-        <input type="email" id="email" [(ngModel)]="reservationData.email" name="email" required>
+        <input 
+          type="email" 
+          id="email" 
+          [(ngModel)]="reservationData.email" 
+          name="email" 
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+          #email="ngModel">
+        <span class="error" *ngIf="email.invalid && email.touched">
+          Ingresa un correo válido
+        </span>
       </div>
-      <div class="reservation-form-group">
-        <label for="phone">Teléfono:</label>
-        <input type="tel" id="phone" [(ngModel)]="reservationData.phone" name="phone" required>
-      </div>
+
       <div class="reservation-button-group">
-        <button type="submit">Confirmar Reservación</button>
-        <button type="button" (click)="closeReservationModal()">Cancelar</button>
+        <button 
+          type="submit" 
+          [disabled]="!reservationForm.form.valid">
+          Confirmar Reservación
+        </button>
+        <button type="button" (click)="closeReservationModal()">
+          Cancelar
+        </button>
       </div>
     </form>
   </div>
