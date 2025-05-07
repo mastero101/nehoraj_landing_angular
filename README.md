@@ -75,17 +75,6 @@ Los archivos de construcción se almacenarán en el directorio `dist/`.
 - Meta API
 - Twilio
 
-## Contribución
-Si deseas contribuir al proyecto:
-1. Haz un Fork del repositorio
-2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
-3. Haz commit de tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Licencia
-Este proyecto está bajo la licencia [MIT](https://choosealicense.com/licenses/mit/)
-
 ## Contacto
 - Email - contacto@nehoraj.com
 - Link del Proyecto: [https://github.com/mastero101/nehoraj_landing_angular](https://github.com/mastero101/nehoraj_landing_angular)
