@@ -1,84 +1,151 @@
-# NehorajLanding
+# Nehoraj Landing
 
-## Descripción
-Nehoraj es una plataforma web desarrollada en Angular 17 que ofrece servicios empresariales, incluyendo espacios de coworking, asesoría tecnológica, y soluciones digitales para emprendedores y pequeñas empresas.
+![Angular](https://img.shields.io/badge/Angular-17-red?logo=angular)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-blue?logo=tailwindcss)
+![OpenAI](https://img.shields.io/badge/OpenAI-API-green?logo=openai)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+---
+
+## 🚀 Nehoraj Landing
+
+**Nehoraj** es una plataforma web desarrollada en Angular 17 que ofrece servicios empresariales, soluciones tecnológicas y herramientas digitales para emprendedores y pequeñas empresas.
+
+---
+
+## Tabla de Contenido
+- [Características](#características)
+- [Demo](#demo)
+- [Requisitos Previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Ejecución](#ejecución)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Contribuir](#contribuir)
+- [Contacto](#contacto)
+- [Licencia](#licencia)
+
+---
+
+## Características
+- 🎨 **Diseño responsive y moderno**
+- 🤖 **Chat con IA (OpenAI)**
+- 📅 **Sistema de reservas**
+- 📬 **Formulario de contacto**
+- 🛠️ **Galería de servicios y soluciones**
+- 👥 **Sección de equipo y aliados**
+- 🔒 **Integración con APIs externas (Meta, Twilio, OpenAI)**
+
+---
+
+## Demo
+
+> [🔗 Ver Demo en Producción](https://github.com/mastero101/nehoraj_landing_angular)
+
+---
 
 ## Requisitos Previos
-- Node.js (versión 18.x o superior)
-- npm (versión 9.x o superior)
-- Angular CLI (versión 17.x)
+- [Node.js](https://nodejs.org/) (v18.x o superior)
+- [npm](https://www.npmjs.com/) (v9.x o superior)
+- [Angular CLI](https://angular.io/cli) (v17.x)
+
+---
 
 ## Instalación
 
-1. Clona el repositorio
-
-git clone https://github.com/mastero101/nehoraj_landing_angular
-
-cd nehoraj
-
-2. Instala las dependencias
-
+```bash
+git clone https://github.com/mastero101/nehoraj_landing_angular.git
+cd nehoraj_landing_angular
 npm install
+```
 
+---
 
-3. Configura las variables de entorno
-- Crea un archivo `src/environments/environment.ts` con la siguiente estructura:
+## Configuración
 
-typescript
+Crea el archivo `src/environments/environment.ts` con el siguiente contenido:
+
+```typescript
 export const environment = {
-production: false,
-openaiApiKey: 'tu_api_key',
-meta: {
-phoneNumberId: 'tu_phone_number_id',
-accessToken: 'tu_access_token'
-},
-twilio: {
-accountSid: 'tu_account_sid',
-authToken: 'tu_auth_token',
-whatsappNumber: 'tu_whatsapp_number'
-}
+  production: false,
+  openaiApiKey: 'tu_api_key',
+  meta: {
+    phoneNumberId: 'tu_phone_number_id',
+    accessToken: 'tu_access_token'
+  },
+  twilio: {
+    accountSid: 'tu_account_sid',
+    authToken: 'tu_auth_token',
+    whatsappNumber: 'tu_whatsapp_number'
+  }
 };
+```
 
+---
 
-## Ejecución del Proyecto
+## Ejecución
 
 ### Desarrollo
-Para ejecutar el proyecto en modo desarrollo:
-
+```bash
 ng serve
-
-Navega a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambias alguno de los archivos fuente.
+```
+Visita [http://localhost:4200/](http://localhost:4200/) en tu navegador.
 
 ### Producción
-Para construir el proyecto para producción:
-
+```bash
 ng build
+```
+Los archivos de construcción estarán en el directorio `dist/`.
 
-Los archivos de construcción se almacenarán en el directorio `dist/`.
+---
 
 ## Estructura del Proyecto
 
+```
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   ├── services/
+│   │   └── ...
+│   ├── assets/
+│   ├── environments/
+│   └── ...
+├── angular.json
+├── package.json
+└── ...
+```
 
-## Características Principales
-- Diseño responsive
-- Integración con IA para chat
-- Sistema de reservas
-- Formulario de contacto
-- Galería de servicios y soluciones
-- Sección de equipo y aliados
+---
 
 ## Tecnologías Utilizadas
-- Angular 17
-- TypeScript
-- TailwindCSS
-- OpenAI API
-- Meta API
-- Twilio
+- **Angular 17**
+- **TypeScript**
+- **TailwindCSS**
+- **OpenAI API**
+- **Meta API**
+- **Twilio**
+
+---
+
+## Contribuir
+
+¡Las contribuciones son bienvenidas! Por favor, abre un issue o pull request para sugerencias o mejoras.
+
+1. Haz un fork del repositorio
+2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. Realiza tus cambios y haz commit (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Haz push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+---
 
 ## Contacto
-- Email - contacto@nehoraj.com
-- Link del Proyecto: [https://github.com/mastero101/nehoraj_landing_angular](https://github.com/mastero101/nehoraj_landing_angular)
+- 📧 Email: contacto@nehoraj.com
+- 🌐 [Repositorio en GitHub](https://github.com/mastero101/nehoraj_landing_angular)
 
-## Further help
+---
 
-Para obtener más ayuda sobre Angular CLI, usa `ng help` o consulta la página [Angular CLI Overview and Command Reference](https://angular.io/cli).
+## Licencia
+
+Este proyecto está bajo la licencia MIT.
