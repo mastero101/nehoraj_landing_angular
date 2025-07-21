@@ -9,6 +9,9 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+// Historial para OpenAI
+type OpenAIMessage = { role: 'user' | 'assistant', content: string };
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -26,6 +29,7 @@ export class ChatComponent {
   messages: ChatMessage[] = [];
   newMessage: string = '';
   isLoading: boolean = false;
+  openaiHistory: OpenAIMessage[] = [];
   
   constructor(private openaiService: OpenaiService) {
     this.addWelcomeMessage();
@@ -38,10 +42,12 @@ export class ChatComponent {
   async sendMessage() {
     if (this.newMessage.trim()) {
       this.addMessage(this.newMessage, true);
+      this.openaiHistory.push({ role: 'user', content: this.newMessage });
       this.isLoading = true;
-      const aiResponse = await this.getAIResponse(this.newMessage);
+      const aiResponse = await this.getAIResponse();
       this.isLoading = false;
       this.addMessage(aiResponse, false);
+      this.openaiHistory.push({ role: 'assistant', content: aiResponse });
       this.newMessage = '';
     }
   }
@@ -54,12 +60,13 @@ export class ChatComponent {
     });
   }
 
-  private async getAIResponse(message: string): Promise<string> {
-    return await this.openaiService.getResponse(message);
+  private async getAIResponse(): Promise<string> {
+    return await this.openaiService.getResponse(this.openaiHistory);
   }
 
   private addWelcomeMessage() {
     const welcomeMessage = 'Bienvenido al servicio de atención al cliente de Grupo Nehoraj. ¿En qué puedo ayudarle hoy?';
     this.addMessage(welcomeMessage, false);
+    this.openaiHistory.push({ role: 'assistant', content: welcomeMessage });
   }
 }

@@ -3,12 +3,15 @@
   class="fixed z-50 bg-white shadow-lg rounded-lg overflow-hidden bottom-24 right-4 w-11/12 max-w-sm sm:bottom-28 sm:right-6 md:bottom-20 md:right-8 lg:bottom-24 lg:right-10 lg:max-w-md"
 >
   <div
-    class="chat-header bg-blue-500 text-white p-3 flex justify-between items-center"
+    class="chat-header bg-gradient-to-r from-blue-600 to-sky-500 text-white p-3 flex justify-between items-center shadow-md"
   >
-    <span>Chat</span>
+    <div class="flex items-center gap-2">
+      <img src="../../../assets/alies/techIA.jpg" alt="Nehoraj" class="h-7 w-7 rounded-full shadow border border-white bg-white" />
+      <span class="font-bold tracking-wide">Asistente Nehoraj</span>
+    </div>
     <button
       (click)="close()"
-      class="focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+      class="focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 hover:bg-white/20 rounded-full p-1 transition"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +29,8 @@
       </svg>
     </button>
   </div>
-  <div class="chat-body p-4 h-96 overflow-y-auto bg-gray-100">
-    <div *ngFor="let message of messages" class="mb-4">
+  <div class="chat-body p-4 h-96 overflow-y-auto bg-gradient-to-b from-gray-100 to-white">
+    <div *ngFor="let message of messages" class="mb-4 animate-fade-in">
       <div
         [ngClass]="{
           'flex justify-end': message.isUser,
@@ -36,11 +39,10 @@
       >
         <div
           [ngClass]="{
-            'bg-blue-500 text-white rounded-lg py-2 px-4 max-w-[70%] shadow-md':
-              message.isUser,
-            'bg-white text-gray-800 rounded-lg py-2 px-4 max-w-[70%] shadow-md':
-              !message.isUser
+            'bg-gradient-to-r from-blue-600 via-blue-400 to-sky-400 text-white rounded-2xl py-2 px-4 max-w-[70%] shadow-lg border border-blue-300 font-semibold': message.isUser,
+            'bg-white text-gray-800 rounded-2xl py-2 px-4 max-w-[70%] shadow border border-gray-200': !message.isUser
           }"
+          class="transition-transform duration-300"
         >
           {{ message.text }}
         </div>
@@ -50,30 +52,34 @@
           'text-right': message.isUser,
           'text-left': !message.isUser
         }"
-        class="text-xs text-gray-500 mt-1"
+        class="text-xs text-gray-400 mt-1"
       >
-        {{ message.timestamp | date : "short" }}
+        {{ message.timestamp | date : "shortTime" }}
       </div>
     </div>
-    <!-- Loading Spinner -->
-    <div *ngIf="isLoading" class="flex justify-center items-center mt-4">
-      <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
+    <!-- Loading Spinner & escribiendo -->
+    <div *ngIf="isLoading" class="flex items-center gap-2 mt-4 animate-fade-in">
+      <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-7 w-7"></div>
+      <span class="text-sm text-gray-500">El asistente está escribiendo...</span>
     </div>
   </div>
-  <div class="chat-footer p-3 border-t bg-white">
-    <form (ngSubmit)="sendMessage()" class="flex">
+  <div class="chat-footer p-3 border-t bg-white flex items-center gap-2">
+    <form (ngSubmit)="sendMessage()" class="flex w-full">
       <input
         [(ngModel)]="newMessage"
         name="newMessage"
         type="text"
         placeholder="Escribe un mensaje..."
-        class="flex-grow p-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-300"
+        class="flex-grow p-2 border rounded-l-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50 shadow-sm"
+        autocomplete="off"
       />
       <button
         type="submit"
-        class="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        class="bg-gradient-to-r from-blue-500 to-sky-400 text-white px-4 py-2 rounded-r-full hover:from-blue-600 hover:to-sky-500 focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-md flex items-center gap-1 transition"
+        [disabled]="isLoading || !newMessage.trim()"
       >
-        Enviar
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span class="hidden sm:inline">Enviar</span>
       </button>
     </form>
   </div>
