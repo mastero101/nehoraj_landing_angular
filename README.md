@@ -126,19 +126,6 @@ Los archivos de construcción estarán en el directorio `dist/`.
 - **Meta API**
 - **Twilio**
 
----
-
-## Contribuir
-
-¡Las contribuciones son bienvenidas! Por favor, abre un issue o pull request para sugerencias o mejoras.
-
-1. Haz un fork del repositorio
-2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. Realiza tus cambios y haz commit (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Haz push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
----
 
 ## Contacto
 - 📧 Email: contacto@nehoraj.com
@@ -148,4 +135,3 @@ Los archivos de construcción estarán en el directorio `dist/`.
 
 ## Licencia
 
-.
