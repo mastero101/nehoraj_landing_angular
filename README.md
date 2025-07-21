@@ -148,4 +148,4 @@ Los archivos de construcción estarán en el directorio `dist/`.
 
 ## Licencia
 
-Este proyecto está bajo la licencia MIT.
+.
