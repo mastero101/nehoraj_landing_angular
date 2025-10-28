@@ -18,6 +18,7 @@ h2 {
   color: #1f2937; // Color más oscuro para mejor contraste
   border-bottom: 2px solid #e5e7eb; // Línea inferior para separación
   padding-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 h3 {
@@ -25,6 +26,8 @@ h3 {
   font-weight: 600;
   margin-bottom: 1rem; // Mayor espaciado inferior
   color: #374151; // Color más oscuro para mejor contraste
+  display: flex;
+  align-items: center;
 }
 
 p {
@@ -41,5 +44,55 @@ ul {
   li {
     margin-bottom: 0.75rem; // Mayor espaciado entre elementos
   }
+}
+
+/* Tarjeta base */
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+  padding: 1.5rem;
+  overflow: hidden;
+  margin-bottom: 2rem; // Espaciado entre tarjetas
+}
+
+/* Barra superior sutil para acento visual */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  height: 6px;
+  width: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+/* Bloque contexto con banda lateral */
+.contexto {
+  border-left: 6px solid #06b6d4;
+  background: #ffffff;
+}
+
+/* Listas con iconos: mejor alineación y ritmo vertical */
+.list-enhanced {
+  list-style: none;
+  padding-left: 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #e5e7eb;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Aumentar separación entre columnas en pantallas medianas+ */
+.grid.md\:grid-cols-2 {
+  gap: 2.75rem; // ~gap-11
 }
 

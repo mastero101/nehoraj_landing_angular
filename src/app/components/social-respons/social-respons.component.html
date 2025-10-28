@@ -1,6 +1,9 @@
 <div class="responsabilidad-social">
-    <h1 class="text-2xl font-bold mb-4">Nuestra Responsabilidad Social</h1>
-    <p class="mb-8">
+    <h1 class="titulo-seccion text-2xl font-bold mb-4 flex items-center justify-center gap-2">
+      <svg class="w-6 h-6 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C12 21 4 17 4 10a4 4 0 118 0c0 7-8 11-8 11"/><path d="M20 8a3 3 0 11-6 0 3 3 0 016 0"/></svg>
+      Nuestra Responsabilidad Social
+    </h1>
+    <p class="descripcion mb-8">
       En nuestra empresa, creemos en el impacto positivo que podemos generar
       en la sociedad a través de nuestras acciones y campañas de
       responsabilidad social.
@@ -17,14 +20,24 @@
           </div>
           
           <!-- Botones de navegación -->
-          <button (click)="prevSlide(campania.id)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2">‹</button>
-          <button (click)="nextSlide(campania.id)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2">›</button>
+          <button (click)="prevSlide(campania.id)" class="nav-btn prev absolute left-2 top-1/2 transform -translate-y-1/2" aria-label="Anterior">❮</button>
+          <button (click)="nextSlide(campania.id)" class="nav-btn next absolute right-2 top-1/2 transform -translate-y-1/2" aria-label="Siguiente">❯</button>
         </div>
 
                 <!-- Modal -->
         <div class="modal" [ngClass]="{'show': isModalOpen}">
-            <span class="close" (click)="closeModal()">&times;</span>
-            <img [src]="modalImage" class="modal-content">
+            <button class="modal-close" (click)="closeModal()" aria-label="Cerrar">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="modal-viewport" (mousedown)="startPan($event)" (mousemove)="pan($event)" (mouseup)="endPan()" (mouseleave)="endPan()" (click)="setZoomCenter($event)">
+              <img [src]="modalImage" class="modal-content" [style.transform]="'translate(' + translateX + 'px,' + translateY + 'px) scale(' + zoomLevel + ')'" [style.transform-origin]="transformOrigin">
+            </div>
+            <div class="zoom-controls">
+              <button class="zoom-btn" (click)="zoomOut()" aria-label="Alejar">-</button>
+              <span class="zoom-level">{{ (zoomLevel * 100) | number:'1.0-0' }}%</span>
+              <button class="zoom-btn" (click)="zoomIn()" aria-label="Acercar">+</button>
+              <button class="zoom-reset" (click)="resetZoom()" aria-label="Restablecer">Restablecer</button>
+            </div>
         </div>
       </div>
     </div>

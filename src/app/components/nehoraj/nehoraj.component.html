@@ -69,7 +69,11 @@
 
     <div class="modal" [class.hidden]="!isModalOpen">
       <div class="modal-content pb-2">
-        <button class="close-btn" (click)="toggleModal()">×</button>
+        <button class="close-btn" (click)="toggleModal()" aria-label="Cerrar" title="Cerrar">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
         <div class="modal-body">
           <app-mision-vision></app-mision-vision>
         </div>
@@ -78,7 +82,11 @@
 
     <div class="modal" [class.hidden]="!isModalOpen2">
       <div class="modal-content pb-2">
-        <button class="close-btn" (click)="toggleModal2()">×</button>
+        <button class="close-btn" (click)="toggleModal2()" aria-label="Cerrar" title="Cerrar">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
         <div class="modal-body">
           <app-social-respons></app-social-respons>
         </div>
@@ -729,7 +737,7 @@
             </li>
           </ul>
           <div class="mt-6 text-sm text-gray-500">
-            © 2024 ARS Tech. Todos los derechos reservados.
+            © 2025 ARCS Tech. Todos los derechos reservados.
           </div>
         </nav>
       </div>
