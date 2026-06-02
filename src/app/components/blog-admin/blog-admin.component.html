@@ -1,0 +1,352 @@
+<div class="w-full max-w-4xl mx-auto px-4 py-8">
+  <!-- Botón Cerrar Panel -->
+  <div class="flex items-center justify-between mb-8">
+    <button 
+      (click)="onCloseAdmin()" 
+      class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold group transition-colors">
+      <span class="transform group-hover:-translate-x-1 transition-transform">&larr;</span> Regresar al Blog Público
+    </button>
+
+    <button 
+      *ngIf="blogService.isLoggedIn() && viewState !== 'login'"
+      (click)="onLogout()" 
+      class="text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider">
+      🚪 Cerrar Sesión
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 1. VISTA DE INICIAR SESIÓN -->
+  <!-- ========================================== -->
+  <div *ngIf="viewState === 'login'" class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-blue-50/50 p-8">
+    <div class="text-center mb-6">
+      <span class="text-4xl block mb-2">🔑</span>
+      <h3 class="text-2xl font-bold text-gray-900">Login de Redactor</h3>
+      <p class="text-gray-500 text-sm mt-1">Identifícate para gestionar los artículos de Nehoraj.</p>
+    </div>
+
+    <form (ngSubmit)="onLogin($event)" #loginForm="ngForm">
+      <div *ngIf="authError" class="mb-4 p-3.5 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl">
+        {{ authError }}
+      </div>
+      <div *ngIf="authSuccess" class="mb-4 p-3.5 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded-r-xl">
+        {{ authSuccess }}
+      </div>
+
+      <div class="mb-4">
+        <label for="username" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Usuario</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          [(ngModel)]="username" 
+          required 
+          placeholder="Escribe tu usuario" 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+
+      <div class="mb-6">
+        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contraseña</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="password" 
+          required 
+          placeholder="••••••••" 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="!loginForm.form.valid || authLoading" 
+        class="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-600 transition-all disabled:opacity-50">
+        {{ authLoading ? 'Autenticando...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-6 pt-4 border-t border-gray-100">
+      <button 
+        (click)="viewState = 'register'; authError = ''; authSuccess = ''; password = ''" 
+        class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+        ✨ ¿No tienes cuenta? Registra un nuevo redactor
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. VISTA DE REGISTRO -->
+  <!-- ========================================== -->
+  <div *ngIf="viewState === 'register'" class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-blue-50/50 p-8">
+    <div class="text-center mb-6">
+      <span class="text-4xl block mb-2">✍️</span>
+      <h3 class="text-2xl font-bold text-gray-900">Registrar Redactor</h3>
+      <p class="text-gray-500 text-sm mt-1">Crea un nuevo acceso de escritura para el blog.</p>
+    </div>
+
+    <form (ngSubmit)="onRegister($event)" #registerForm="ngForm">
+      <div *ngIf="authError" class="mb-4 p-3.5 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl">
+        {{ authError }}
+      </div>
+
+      <div class="mb-4">
+        <label for="reg_username" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Nuevo Usuario</label>
+        <input 
+          type="text" 
+          id="reg_username" 
+          name="reg_username" 
+          [(ngModel)]="username" 
+          required 
+          placeholder="Ej: andres_nehoraj" 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+
+      <div class="mb-6">
+        <label for="reg_password" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contraseña de Acceso</label>
+        <input 
+          type="password" 
+          id="reg_password" 
+          name="reg_password" 
+          [(ngModel)]="password" 
+          required 
+          placeholder="••••••••" 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="!registerForm.form.valid || authLoading" 
+        class="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-600 transition-all disabled:opacity-50">
+        {{ authLoading ? 'Registrando...' : 'Registrar Redactor' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-6 pt-4 border-t border-gray-100">
+      <button 
+        (click)="viewState = 'login'; authError = ''; authSuccess = ''; password = ''" 
+        class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+        🔑 ¿Ya tienes cuenta? Iniciar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. PANEL DE CONTROL (DASHBOARD) -->
+  <!-- ========================================== -->
+  <div *ngIf="viewState === 'dashboard'" class="bg-white rounded-3xl shadow-xl border border-blue-50/50 p-6 md:p-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900">Gestión de Contenidos</h3>
+        <p class="text-gray-500 text-sm mt-0.5">Publica, edita o elimina artículos del blog.</p>
+      </div>
+
+      <button 
+        (click)="openCreateForm()" 
+        class="inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-md hover:bg-blue-700 transition-colors">
+        ➕ Crear Nuevo Artículo
+      </button>
+    </div>
+
+    <!-- Lista de Artículos en Tabla -->
+    <div *ngIf="listLoading" class="flex justify-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+    </div>
+
+    <div *ngIf="!listLoading && postsList.length > 0" class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+      <table class="w-full text-left text-sm text-gray-700">
+        <thead class="bg-gray-50 text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100">
+          <tr>
+            <th class="px-6 py-4">Artículo</th>
+            <th class="px-6 py-4">Categoría</th>
+            <th class="px-6 py-4">Fecha</th>
+            <th class="px-6 py-4 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr *ngFor="let post of postsList" class="hover:bg-blue-50/20 transition-colors">
+            <td class="px-6 py-4 font-bold text-gray-900 max-w-xs truncate">{{ post.title }}</td>
+            <td class="px-6 py-4">
+              <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase">{{ post.category }}</span>
+            </td>
+            <td class="px-6 py-4 text-xs text-gray-400">{{ post.created_at | date:'shortDate' }}</td>
+            <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+              <button 
+                (click)="openEditForm(post)" 
+                class="px-3 py-1.5 rounded-lg border border-blue-200 text-blue-600 text-xs font-bold hover:bg-blue-50 transition-colors">
+                ✏️ Editar
+              </button>
+              <button 
+                (click)="onDeletePost(post.id!)" 
+                class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition-colors">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!listLoading && postsList.length === 0" class="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+      <span class="text-3xl block mb-2">📝</span>
+      <p class="text-gray-500 font-medium">Aún no hay artículos publicados. ¡Comienza a escribir hoy!</p>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. FORMULARIO EDITOR DE ARTÍCULO -->
+  <!-- ========================================== -->
+  <div *ngIf="viewState === 'editor'" class="bg-white rounded-3xl shadow-xl border border-blue-50/50 p-6 md:p-8">
+    <h3 class="text-2xl font-bold text-gray-900 mb-6">
+      {{ editingPost.id ? '✏️ Editar Artículo' : '✍️ Crear Nuevo Artículo' }}
+    </h3>
+
+    <form (ngSubmit)="onSavePost()" #postForm="ngForm">
+      <!-- Grid de Metadatos -->
+      <div class="grid gap-6 md:grid-cols-2 mb-6">
+        <div>
+          <label for="post_title" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Título del Artículo</label>
+          <input 
+            type="text" 
+            id="post_title" 
+            name="post_title" 
+            [(ngModel)]="editingPost.title" 
+            required 
+            placeholder="Título impactante..." 
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+        </div>
+
+        <div>
+          <label for="post_category" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Categoría</label>
+          <select 
+            id="post_category" 
+            name="post_category" 
+            [(ngModel)]="editingPost.category" 
+            required 
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="post_excerpt" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Resumen / Extracto</label>
+        <textarea 
+          id="post_excerpt" 
+          name="post_excerpt" 
+          [(ngModel)]="editingPost.excerpt" 
+          rows="2"
+          placeholder="Un breve extracto o gancho para la tarjeta..." 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
+      </div>
+
+      <!-- CARGADORES DE MULTIMEDIA A VERCEL BLOB -->
+      <div class="mb-6 p-5 bg-blue-50/40 border border-blue-100 rounded-2xl">
+        <label class="block text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">📦 Subidor Multimedia (Vercel Blob Storage)</label>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <!-- Input oculto de archivos -->
+          <input 
+            type="file" 
+            id="file_uploader" 
+            (change)="onFileSelected($event)" 
+            accept="image/*,video/*,audio/*"
+            class="hidden">
+          
+          <button 
+            type="button" 
+            (click)="uploader.click()" 
+            #uploader 
+            [disabled]="uploadingFile"
+            class="px-4 h-10 rounded-xl bg-white border border-blue-200 text-blue-600 text-xs font-bold hover:bg-blue-50 shadow-sm transition-colors disabled:opacity-50">
+            {{ uploadingFile ? 'Subiendo archivo...' : '📁 Seleccionar Imagen / Audio / Video' }}
+          </button>
+
+          <p class="text-[11px] text-gray-400">Archivos cargados aquí se almacenarán en la nube de Vercel.</p>
+        </div>
+
+        <!-- Feedback de archivo subido -->
+        <div *ngIf="uploadedUrl" class="mt-4 p-3 bg-white border border-green-100 rounded-xl flex items-center justify-between gap-4">
+          <div class="truncate">
+            <span class="text-xs text-green-600 font-bold block mb-0.5">✓ Archivo subido con éxito</span>
+            <a [href]="uploadedUrl" target="_blank" class="text-xs text-blue-500 underline truncate block">{{ uploadedUrl }}</a>
+          </div>
+          <button 
+            type="button" 
+            (click)="setAsCoverImage()" 
+            class="px-3 h-8 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold rounded-lg transition-colors">
+            Establecer como Portada
+          </button>
+        </div>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 mb-6">
+        <div>
+          <label for="post_cover" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">URL de Imagen de Portada</label>
+          <input 
+            type="text" 
+            id="post_cover" 
+            name="post_cover" 
+            [(ngModel)]="editingPost.cover_image" 
+            placeholder="Pegar URL de la imagen o subir un archivo arriba" 
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+        </div>
+
+        <div>
+          <label for="post_time" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Tiempo de lectura estimado</label>
+          <input 
+            type="text" 
+            id="post_time" 
+            name="post_time" 
+            [(ngModel)]="editingPost.reading_time" 
+            placeholder="Ej: 5 min" 
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="post_tags" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Tags / Etiquetas (Separados por coma)</label>
+        <input 
+          type="text" 
+          id="post_tags" 
+          name="post_tags" 
+          [(ngModel)]="tagsInput" 
+          placeholder="IA, Automatizacion, Drones" 
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+
+      <div class="mb-6">
+        <label for="post_content" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contenido Completo (Soporta HTML)</label>
+        <div class="p-3 bg-gray-50 border border-b-0 border-gray-200 rounded-t-xl text-[11px] text-gray-400 flex flex-wrap gap-3">
+          <span>💡 Puedes usar HTML:</span>
+          <span><code>&lt;h2&gt;Subtitulo&lt;/h2&gt;</code></span>
+          <span><code>&lt;strong&gt;negrita&lt;/strong&gt;</code></span>
+          <span><code>&lt;blockquote&gt;cita&lt;/blockquote&gt;</code></span>
+        </div>
+        <textarea 
+          id="post_content" 
+          name="post_content" 
+          [(ngModel)]="editingPost.content" 
+          required 
+          rows="12"
+          placeholder="Escribe el cuerpo del artículo aquí en formato de texto enriquecido o usando HTML..." 
+          class="w-full px-4 py-3 border border-gray-200 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex items-center justify-end gap-3">
+        <button 
+          type="button" 
+          (click)="viewState = 'dashboard'; loadPosts()" 
+          class="px-6 h-12 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="!postForm.form.valid || editorLoading" 
+          class="px-8 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50">
+          {{ editorLoading ? 'Guardando...' : '💾 Guardar y Publicar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

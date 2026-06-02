@@ -1,0 +1,8 @@
+/* Estilos específicos del panel de administración del blog */
+code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  color: #ef4444;
+  font-family: monospace;
+}

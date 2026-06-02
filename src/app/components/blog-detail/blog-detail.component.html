@@ -1,0 +1,157 @@
+<div class="w-full max-w-4xl mx-auto px-4 py-8">
+  <!-- Botón Volver -->
+  <button 
+    (click)="onGoBack()" 
+    class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold mb-8 group transition-colors">
+    <span class="transform group-hover:-translate-x-1 transition-transform">&larr;</span> Volver a la lista de artículos
+  </button>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4"></div>
+    <p class="text-gray-500 font-medium">Cargando el artículo...</p>
+  </div>
+
+  <!-- Contenido del Artículo -->
+  <article *ngIf="!loading && post" class="bg-white rounded-3xl shadow-xl border border-blue-50/50 overflow-hidden">
+    <!-- Portada del Artículo -->
+    <div class="relative h-64 md:h-[400px] overflow-hidden bg-gray-100">
+      <img 
+        [src]="post.cover_image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80'" 
+        [alt]="post.title" 
+        class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"></div>
+      
+      <!-- Categoría flotante sobre portada -->
+      <span class="absolute bottom-6 left-6 md:left-10 bg-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow border border-blue-400/50">
+        {{ post.category }}
+      </span>
+    </div>
+
+    <div class="px-6 md:px-10 py-8">
+      <!-- Metadatos de cabecera -->
+      <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400 mb-4 pb-4 border-b border-gray-100">
+        <span class="flex items-center gap-1.5">📅 {{ post.created_at | date:'longDate' }}</span>
+        <span>•</span>
+        <span class="flex items-center gap-1.5">⏱️ Tiempo de lectura: {{ post.reading_time || '3 min' }}</span>
+      </div>
+
+      <!-- Título Principal -->
+      <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight mb-6 font-sans">
+        {{ post.title }}
+      </h1>
+
+      <!-- Autor del artículo -->
+      <div class="flex items-center gap-4 bg-blue-50/30 border border-blue-100/50 p-4 rounded-2xl mb-8">
+        <img 
+          [src]="post.author_avatar || 'assets/img/cofounder-1.png'" 
+          [alt]="post.author_name" 
+          class="w-12 h-12 rounded-full object-cover ring-4 ring-white shadow-md">
+        <div>
+          <p class="text-sm font-bold text-gray-900 leading-tight mb-0.5">{{ post.author_name || 'Autor de Nehoraj' }}</p>
+          <p class="text-xs text-blue-600 font-semibold">{{ post.author_role || 'Colaborador Estratégico' }}</p>
+        </div>
+      </div>
+
+      <!-- Resumen / Excerpt destacado -->
+      <p *ngIf="post.excerpt" class="text-lg md:text-xl font-medium text-gray-600 leading-relaxed border-l-4 border-blue-500 pl-4 mb-8">
+        {{ post.excerpt }}
+      </p>
+
+      <!-- Cuerpo del Artículo renderizado como HTML -->
+      <div 
+        class="prose prose-blue max-w-none text-gray-800 leading-relaxed text-base space-y-6 blog-content"
+        [innerHTML]="post.content">
+      </div>
+
+      <!-- Tags y compartir -->
+      <div class="mt-12 pt-6 border-t border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex flex-wrap gap-2">
+          <span 
+            *ngFor="let tag of post.tags" 
+            class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+            #{{ tag }}
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Compartir:</span>
+          <a 
+            [href]="whatsappShareUrl" 
+            target="_blank" 
+            class="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center text-sm transition-colors"
+            title="Compartir por WhatsApp">
+            💬
+          </a>
+          <a
+            [href]="xShareUrl"
+            target="_blank"
+            class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center text-sm transition-colors"
+            title="Compartir en X">
+            𝕏
+          </a>
+          <a
+            [href]="facebookShareUrl"
+            target="_blank"
+            class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 flex items-center justify-center text-sm transition-colors"
+            title="Compartir en Facebook">
+            f
+          </a>
+          <a
+            [href]="linkedInShareUrl"
+            target="_blank"
+            class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 hover:bg-cyan-200 flex items-center justify-center text-sm transition-colors"
+            title="Compartir en LinkedIn">
+            in
+          </a>
+          <button
+            type="button"
+            (click)="copyArticleLink()"
+            class="px-3 h-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold transition-colors">
+            {{ shareLinkCopied ? 'Copiado' : 'Copiar enlace' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Comentarios -->
+      <section class="mt-10 pt-8 border-t border-gray-100">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4">Comentarios</h2>
+
+        <div class="grid gap-3 md:grid-cols-2 mb-3">
+          <input
+            type="text"
+            [(ngModel)]="commentAuthor"
+            placeholder="Tu nombre"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button
+            type="button"
+            (click)="addComment()"
+            class="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
+            Publicar comentario
+          </button>
+        </div>
+
+        <textarea
+          [(ngModel)]="commentMessage"
+          rows="3"
+          placeholder="Escribe tu comentario..."
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+        <p *ngIf="commentError" class="text-sm text-red-600 mt-2">{{ commentError }}</p>
+
+        <div class="mt-6 space-y-4">
+          <article *ngFor="let comment of comments" class="p-4 rounded-2xl border border-gray-100 bg-gray-50">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <p class="font-semibold text-gray-900">{{ comment.author }}</p>
+              <p class="text-xs text-gray-400">{{ comment.createdAt | date:'medium' }}</p>
+            </div>
+            <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ comment.message }}</p>
+          </article>
+          <p *ngIf="comments.length === 0" class="text-sm text-gray-500">
+            Aún no hay comentarios. Sé el primero en comentar.
+          </p>
+        </div>
+      </section>
+    </div>
+  </article>
+</div>

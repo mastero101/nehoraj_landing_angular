@@ -5,6 +5,9 @@ import { ChatComponent } from '../chat/chat.component';
 import { MisionVisionComponent } from '../mision-vision/mision-vision.component';
 import { SocialResponsComponent } from '../social-respons/social-respons.component';
 import { CalendarComponent } from '../calendar/calendar.component';
+import { BlogListComponent } from '../blog-list/blog-list.component';
+import { BlogDetailComponent } from '../blog-detail/blog-detail.component';
+import { BlogAdminComponent } from '../blog-admin/blog-admin.component';
 
 @Component({
   selector: 'app-nehoraj',
@@ -15,13 +18,20 @@ import { CalendarComponent } from '../calendar/calendar.component';
     ChatComponent,
     MisionVisionComponent,
     SocialResponsComponent,
-    CalendarComponent
+    CalendarComponent,
+    BlogListComponent,
+    BlogDetailComponent,
+    BlogAdminComponent
   ],
   templateUrl: './nehoraj.component.html',
   styleUrl: './nehoraj.component.scss'
 })
 
 export class NehorajComponent implements OnInit {
+
+  // Control de estado del Blog
+  currentBlogView: 'none' | 'list' | 'detail' | 'admin' = 'none';
+  selectedPostId: string = '';
 
   testimonials = [
     {
@@ -189,6 +199,28 @@ export class NehorajComponent implements OnInit {
   nombre: string = '';
   email: string = '';
   mensaje: string = '';
+
+  navigateToBlog(): void {
+    this.currentBlogView = 'list';
+    this.menuOpen = false;
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  showPostDetail(id: string): void {
+    this.selectedPostId = id;
+    this.currentBlogView = 'detail';
+  }
+
+  openBlogAdmin(): void {
+    this.currentBlogView = 'admin';
+  }
+
+  exitBlog(): void {
+    this.currentBlogView = 'none';
+    this.selectedPostId = '';
+  }
 
   sendWhatsAppMessage() {
     const phoneNumber = '525637955283'; // Reemplaza con tu número de WhatsApp

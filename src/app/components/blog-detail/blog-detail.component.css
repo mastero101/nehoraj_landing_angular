@@ -1,0 +1,67 @@
+/* Estilos avanzados para el renderizado de HTML enriquecido en el artículo */
+.blog-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-content img {
+  border-radius: 1rem;
+  max-width: 100%;
+  height: auto;
+  margin: 2rem auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.blog-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #4b5563;
+  margin: 1.5rem 0;
+}
+
+.blog-content code {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.4rem;
+}

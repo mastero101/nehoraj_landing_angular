@@ -29,7 +29,10 @@
     </button>
   
     <nav class="hidden md:flex gap-4 sm:gap-6 bg-white/80 rounded-full shadow-lg px-6 py-2 border border-blue-100 backdrop-blur-md transition-all duration-300">
-      <a href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button *ngIf="currentBlogView !== 'none'" (click)="exitBlog()" class="nav-link text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-300 relative group mx-2">
+        <span class="pb-1 font-bold">🏠 Inicio</span>
+      </button>
+      <a *ngIf="currentBlogView === 'none'" href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
         <span class="pb-1">Servicios</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </a>
@@ -41,11 +44,15 @@
         <span class="pb-1">Misión y Visión</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </button>
-      <a href="#solutions" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <a *ngIf="currentBlogView === 'none'" href="#solutions" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
         <span class="pb-1">Soluciones</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </a>
-      <a href="#contact" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button (click)="navigateToBlog()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+        <span class="pb-1">Blog</span>
+        <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+      </button>
+      <a *ngIf="currentBlogView === 'none'" href="#contact" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
         <span class="pb-1">Contacto</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </a>
@@ -53,16 +60,17 @@
   </header>
   
   <nav class="md:hidden transition-all duration-300 ease-in-out" [class.hidden]="!menuOpen">
-    <a href="#features" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
-    <a (click)="toggleModal2()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
+    <a *ngIf="currentBlogView !== 'none'" (click)="exitBlog(); toggleMenu()" class="block py-2 px-4 text-lg text-center font-bold text-blue-600 hover:bg-gray-100">🏠 Inicio</a>
+    <a *ngIf="currentBlogView === 'none'" href="#features" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
+    <a (click)="toggleModal2(); toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
       Responsabilidad Social
     </a>
-    <a (click)="toggleModal()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
+    <a (click)="toggleModal(); toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
       Misión y Visión
     </a>
-    <a href="#solutions" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Soluciones</a>
-    <!-- <a href="#pricing" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Precios</a> -->
-    <a href="#contact" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Contacto</a>
+    <a *ngIf="currentBlogView === 'none'" href="#solutions" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Soluciones</a>
+    <a (click)="navigateToBlog(); toggleMenu()" class="block py-2 px-4 text-lg text-center font-semibold text-blue-600 hover:bg-gray-100">Blog</a>
+    <a *ngIf="currentBlogView === 'none'" href="#contact" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Contacto</a>
   </nav>
 
   <main class="flex-1">
@@ -93,11 +101,12 @@
       </div>
     </div>
 
-    <section id="starting" class="w-full py-6 md:py-12 lg:py-16 xl:py-4 mt-2">
-      <div class="container px-2 md:px-6">
-        <div
-          class="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center"
-        >
+    <div *ngIf="currentBlogView === 'none'">
+      <section id="starting" class="w-full py-6 md:py-12 lg:py-16 xl:py-4 mt-2">
+        <div class="container px-2 md:px-6">
+          <div
+            class="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center"
+          >
           <div class="flex flex-col justify-center space-y-6 lg:space-y-8 order-2 lg:order-1">
             <p class="max-w-xl lg:max-w-2xl text-gray-700 md:text-xl text-center lg:text-left mx-auto lg:mx-0 leading-relaxed">
               Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras para maximizar la eficiencia, reducir costos y mejorar la experiencia del cliente. Desarrollamos soluciones tecnológicas únicas que impulsan tu negocio hacia el futuro digital con aplicaciones móviles, plataformas web y sistemas inteligentes, garantizando un retorno de inversión rápido y medible.
@@ -692,8 +701,27 @@
         </div>
       </div>
     </section>
-    
-  </main>
+  </div>
+
+  <!-- SECCIONES DINÁMICAS DEL BLOG FULLSTACK -->
+  <app-blog-list 
+    *ngIf="currentBlogView === 'list'" 
+    (selectPost)="showPostDetail($event)" 
+    (openAdmin)="openBlogAdmin()">
+  </app-blog-list>
+
+  <app-blog-detail 
+    *ngIf="currentBlogView === 'detail'" 
+    [postId]="selectedPostId" 
+    (goBack)="navigateToBlog()">
+  </app-blog-detail>
+
+  <app-blog-admin 
+    *ngIf="currentBlogView === 'admin'" 
+    (closeAdmin)="navigateToBlog()">
+  </app-blog-admin>
+  
+</main>
 
   <footer class="py-8 md:py-12 lg:py-16 bg-gray-100">
     <div class="container px-4 md:px-6 mx-auto">
