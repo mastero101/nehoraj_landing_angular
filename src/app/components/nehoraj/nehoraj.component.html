@@ -713,6 +713,7 @@
   <app-blog-detail 
     *ngIf="currentBlogView === 'detail'" 
     [postId]="selectedPostId" 
+    [shareUrl]="articleShareUrl"
     (goBack)="navigateToBlog()">
   </app-blog-detail>
 

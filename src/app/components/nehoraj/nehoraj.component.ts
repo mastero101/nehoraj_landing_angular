@@ -32,6 +32,7 @@ export class NehorajComponent implements OnInit {
   // Control de estado del Blog
   currentBlogView: 'none' | 'list' | 'detail' | 'admin' = 'none';
   selectedPostId: string = '';
+  articleShareUrl = '';
 
   testimonials = [
     {
@@ -142,7 +143,7 @@ export class NehorajComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    
+    this.syncBlogStateFromUrl();
   }
 
   toggleMenu() {
@@ -203,6 +204,8 @@ export class NehorajComponent implements OnInit {
   navigateToBlog(): void {
     this.currentBlogView = 'list';
     this.menuOpen = false;
+    this.selectedPostId = '';
+    this.updateBrowserUrl();
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -211,15 +214,46 @@ export class NehorajComponent implements OnInit {
   showPostDetail(id: string): void {
     this.selectedPostId = id;
     this.currentBlogView = 'detail';
+    this.updateBrowserUrl();
   }
 
   openBlogAdmin(): void {
     this.currentBlogView = 'admin';
+    this.updateBrowserUrl();
   }
 
   exitBlog(): void {
     this.currentBlogView = 'none';
     this.selectedPostId = '';
+    this.updateBrowserUrl();
+  }
+
+  private syncBlogStateFromUrl(): void {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const postId = url.searchParams.get('post')?.trim() || '';
+
+    if (postId) {
+      this.selectedPostId = postId;
+      this.currentBlogView = 'detail';
+    }
+
+    this.updateBrowserUrl();
+  }
+
+  private updateBrowserUrl(): void {
+    if (typeof window === 'undefined') return;
+
+    const url = new URL(window.location.href);
+    if (this.currentBlogView === 'detail' && this.selectedPostId) {
+      url.searchParams.set('post', this.selectedPostId);
+      this.articleShareUrl = url.toString();
+    } else {
+      url.searchParams.delete('post');
+      this.articleShareUrl = '';
+    }
+
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
   }
 
   sendWhatsAppMessage() {

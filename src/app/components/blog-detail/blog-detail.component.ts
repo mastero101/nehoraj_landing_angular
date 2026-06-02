@@ -20,6 +20,7 @@ interface BlogComment {
 })
 export class BlogDetailComponent implements OnInit {
   @Input() postId: string = '';
+  @Input() shareUrl: string = '';
   @Output() goBack = new EventEmitter<void>();
 
   post: BlogPost | null = null;
@@ -66,8 +67,8 @@ export class BlogDetailComponent implements OnInit {
   }
 
   get encodedUrl(): string {
-    if (typeof window === 'undefined') return '';
-    return encodeURIComponent(window.location.href);
+    const urlToShare = this.shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    return encodeURIComponent(urlToShare);
   }
 
   get whatsappShareUrl(): string {
@@ -88,7 +89,8 @@ export class BlogDetailComponent implements OnInit {
 
   copyArticleLink(): void {
     if (typeof window === 'undefined' || !navigator?.clipboard) return;
-    navigator.clipboard.writeText(window.location.href).then(() => {
+    const urlToShare = this.shareUrl || window.location.href;
+    navigator.clipboard.writeText(urlToShare).then(() => {
       this.shareLinkCopied = true;
       setTimeout(() => {
         this.shareLinkCopied = false;
