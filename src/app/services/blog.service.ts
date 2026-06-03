@@ -129,7 +129,7 @@ export class BlogService {
   // CARGA MULTIMEDIA A VERCEL BLOB
   // ==========================================
 
-  uploadFile(file: File): Observable<{ url: string }> {
+  uploadFile(file: File): Observable<{ progress: number } | { url: string }> {
     // Para subir binario directamente al backend express.raw(), configuramos headers específicos
     const token = this.getToken() || '';
     const headers = new HttpHeaders({
@@ -138,6 +138,27 @@ export class BlogService {
       'X-Filename': encodeURIComponent(file.name)
     });
 
-    return this.http.post<{ url: string }>(`${this.apiUrl}/upload`, file, { headers });
+    return new Observable(observer => {
+      this.http.post<{ url: string }>(`${this.apiUrl}/upload`, file, {
+        headers,
+        reportProgress: true,
+        observe: 'events'
+      }).subscribe({
+        next: (event: any) => {
+          if (event.type === 1) {
+            // Upload progress event
+            const progress = Math.round((100 * event.loaded) / event.total);
+            observer.next({ progress });
+          } else if (event.type === 4) {
+            // Upload complete event
+            observer.next({ url: event.body.url });
+            observer.complete();
+          }
+        },
+        error: (err) => {
+          observer.error(err);
+        }
+      });
+    });
   }
 }

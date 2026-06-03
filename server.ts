@@ -19,9 +19,9 @@ export function app(): express.Express {
   server.set('views', browserDistFolder);
 
   // Configuración de parsers para APIs y subidas
-  server.use('/api/upload', express.raw({ type: '*/*', limit: '20mb' }));
-  server.use(express.json({ limit: '50mb' }));
-  server.use(express.urlencoded({ extended: true, limit: '50mb' }));
+  server.use('/api/upload', express.raw({ type: '*/*', limit: '500mb' }));
+  server.use(express.json({ limit: '500mb' }));
+  server.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
   // Enrutar endpoints de la API del Blog
   server.use('/api', blogRouter);

@@ -241,11 +241,18 @@
 
       <!-- CARGADORES DE MULTIMEDIA A VERCEL BLOB -->
       <div class="mb-6 p-5 bg-blue-50/40 border border-blue-100 rounded-2xl">
-        <label class="block text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">📦 Subidor Multimedia (Vercel Blob Storage)</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">📦 Subidor Multimedia (Blob Storage)</label>
+        
+        <div class="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+          <p class="text-xs text-yellow-800">
+            <span class="font-bold">⚠️ Límite de tamaño:</span> El límite es de <strong>4.5MB</strong> por archivo. En entorno local puedes subir hasta 500MB.
+          </p>
+        </div>
         
         <div class="flex flex-col sm:flex-row items-center gap-4">
           <!-- Input oculto de archivos -->
           <input 
+            #uploader
             type="file" 
             id="file_uploader" 
             (change)="onFileSelected($event)" 
@@ -255,13 +262,23 @@
           <button 
             type="button" 
             (click)="uploader.click()" 
-            #uploader 
             [disabled]="uploadingFile"
             class="px-4 h-10 rounded-xl bg-white border border-blue-200 text-blue-600 text-xs font-bold hover:bg-blue-50 shadow-sm transition-colors disabled:opacity-50">
-            {{ uploadingFile ? 'Subiendo archivo...' : '📁 Seleccionar Imagen / Audio / Video' }}
+            {{ getUploadButtonText() }}
           </button>
 
-          <p class="text-[11px] text-gray-400">Archivos cargados aquí se almacenarán en la nube de Vercel.</p>
+          <p class="text-[11px] text-gray-400">Archivos cargados aquí se almacenarán en la Blob Storage.</p>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div *ngIf="uploadingFile" class="mt-4">
+          <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div 
+              class="bg-gradient-to-r from-blue-600 to-sky-500 h-full rounded-full transition-all duration-300"
+              [style.width.%]="uploadProgress"
+            ></div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1 text-center">{{ uploadProgress }}% completado</p>
         </div>
 
         <!-- Feedback de archivo subido -->

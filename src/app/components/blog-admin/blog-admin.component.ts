@@ -31,6 +31,7 @@ export class BlogAdminComponent implements OnInit {
   tagsInput = '';
   editorLoading = false;
   uploadingFile = false;
+  uploadProgress = 0;
   uploadedUrl = '';
 
   // Lista de Posts para gestión
@@ -199,21 +200,64 @@ export class BlogAdminComponent implements OnInit {
     const file: File = event.target.files[0];
     if (!file) return;
 
+    // Verificar tamaño antes de subir
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > 4.5) {
+      const confirmar = confirm(
+        `El archivo pesa ${fileSizeMB.toFixed(2)}MB y supera el límite de 4.5MB.\n\n¿Quieres continuar de todos modos? (Solo funcionará en entorno local)`
+      );
+      if (!confirmar) {
+        // Resetear el input de archivo
+        event.target.value = '';
+        return;
+      }
+    }
+
     this.uploadingFile = true;
+    this.uploadProgress = 0;
     this.uploadedUrl = '';
 
     this.blogService.uploadFile(file).subscribe({
-      next: (res) => {
-        this.uploadingFile = false;
-        this.uploadedUrl = res.url;
-        
-        // Ofrecer pegar automáticamente la URL en el contenido
-        const embedText = `\n\n<img src="${res.url}" alt="${file.name}">\n\n`;
-        this.editingPost.content += embedText;
+      next: (res: any) => {
+        if ('progress' in res) {
+          // Actualizar progreso
+          this.uploadProgress = res.progress;
+        } else if ('url' in res) {
+          // Subida completada
+          this.uploadingFile = false;
+          this.uploadProgress = 100;
+          this.uploadedUrl = res.url;
+          
+          // Detectar tipo de archivo y generar HTML adecuado
+          let embedText = '';
+          if (file.type.startsWith('image/')) {
+            embedText = `\n\n<img src="${res.url}" alt="${file.name}" class="w-full rounded-xl shadow-md my-4">\n\n`;
+          } else if (file.type.startsWith('audio/')) {
+            embedText = `\n\n<audio controls src="${res.url}" title="${file.name}" class="w-full my-4">\n  Tu navegador no soporta el elemento de audio.\n</audio>\n\n`;
+          } else {
+            embedText = `\n\n<a href="${res.url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">📄 ${file.name}</a>\n\n`;
+          }
+          
+          this.editingPost.content += embedText;
+        }
       },
       error: (err) => {
         this.uploadingFile = false;
-        alert('Error al subir archivo a Vercel Blob: ' + (err.error?.error || err.message));
+        this.uploadProgress = 0;
+        
+        let errorMessage = 'Error al subir archivo al Blob: ';
+        
+        if (err.status === 413) {
+          errorMessage = 'El archivo es demasiado grande. El límite es de 4.5MB por archivo. Por favor, reduce el tamaño del archivo o prueba en entorno local.';
+        } else if (err.error?.error) {
+          errorMessage += err.error.error;
+        } else if (err.message) {
+          errorMessage += err.message;
+        } else {
+          errorMessage += 'Error desconocido';
+        }
+        
+        alert(errorMessage);
       }
     });
   }
@@ -222,6 +266,13 @@ export class BlogAdminComponent implements OnInit {
     if (this.uploadedUrl) {
       this.editingPost.cover_image = this.uploadedUrl;
     }
+  }
+
+  getUploadButtonText(): string {
+    if (this.uploadingFile) {
+      return 'Subiendo... ' + this.uploadProgress + '%';
+    }
+    return '📁 Seleccionar Imagen / Audio / Video';
   }
 
   // ==========================================

@@ -65,3 +65,38 @@
   padding: 0.15rem 0.35rem;
   border-radius: 0.4rem;
 }
+
+.blog-content audio {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-radius: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background: #f9fafb;
+}
+
+/* Estilos personalizados para el reproductor de audio */
+.blog-content audio::-webkit-media-controls-panel {
+  background: linear-gradient(to right, #2563eb, #06b6d4);
+  border-radius: 2rem;
+}
+
+.blog-content audio::-webkit-media-controls-play-button,
+.blog-content audio::-webkit-media-controls-volume-slider {
+  filter: brightness(0) invert(1);
+}
+
+.blog-content audio::-webkit-media-controls-current-time-display,
+.blog-content audio::-webkit-media-controls-time-remaining-display {
+  color: white;
+  font-weight: 500;
+}
+
+.blog-content audio::-webkit-media-controls-timeline {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0.25rem;
+}
+
+.blog-content audio::-webkit-media-controls-slider-thumb {
+  background: white;
+}
+
