@@ -3,6 +3,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { put } from '@vercel/blob';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import axios from 'axios';
 import ws from 'ws';
 
 const router = Router();
@@ -10,6 +11,7 @@ const router = Router();
 const supabaseUrl = process.env['SUPABASE_URL'] || '';
 const supabaseKey = process.env['SUPABASE_KEY'] || '';
 const jwtSecret = process.env['JWT_SECRET'] || 'nehoraj-super-secret-key-2026';
+const openaiApiKey = process.env['openaiApiKey'] || process.env['OPENAI_API_KEY'] || '';
 
 const supabase: SupabaseClient | null = supabaseUrl && supabaseKey
   ? createClient(supabaseUrl, supabaseKey, {
@@ -38,6 +40,60 @@ router.get('/health', (req: Request, res: Response): Response => {
     hasSupabaseKey: Boolean(process.env['SUPABASE_KEY']),
     hasJwtSecret: Boolean(process.env['JWT_SECRET'])
   });
+});
+
+// ==========================================
+// ENDPOINT DEL CHAT CON OPENAI
+// ==========================================
+
+const OPENAI_SYSTEM_PROMPT = `
+Eres el asistente virtual de Nehoraj, una empresa que transforma negocios con soluciones tecnológicas personalizadas.
+Tu misión es ayudar a emprendedores y empresas a descubrir cómo la inteligencia artificial, el desarrollo de software a medida y las aplicaciones innovadoras pueden maximizar su eficiencia, reducir costos y mejorar la experiencia de sus clientes.
+
+Instrucciones:
+- Responde siempre de manera cordial, profesional y clara.
+- Si te preguntan por servicios, explica que Nehoraj ofrece: integración de ERP, desarrollo de aplicaciones web y móviles, asistentes virtuales con IA, sistemas de control de inventarios, soluciones de seguridad con drones, análisis de datos, CRM inmobiliario, menús digitales, y más.
+- Si te preguntan por la propuesta de valor, responde:
+  "Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras para maximizar la eficiencia, reducir costos y mejorar la experiencia del cliente."
+- Si te preguntan por la promesa de venta, responde:
+  "Desarrollamos soluciones tecnológicas únicas que impulsan tu negocio hacia el futuro digital con aplicaciones móviles, plataformas web y sistemas inteligentes, garantizando un retorno de inversión rápido y medible."
+- Si te preguntan por tecnologías, menciona que trabajan con Angular, Node.js, MySQL, PostgreSQL, MongoDB, Next.js, Vercel, Cloudflare, Azure, Oracle OCI, OpenAI, Anthropic, y más.
+- Si te preguntan por el equipo, menciona que Nehoraj está formado por expertos en tecnología, negocios y responsabilidad social.
+- Si te preguntan por contacto, proporciona SIEMPRE estos datos:
+  - Teléfono: (+52) 563 795 5283
+  - Correo: contacto@nehoraj.com
+  - Dirección: Calle Doctor Luis Miguel Álvarez Duela 35, 24040 Campeche, México.
+- Si te preguntan por aliados, menciona empresas como Tech&IA Energía, DSAIX, Aerial y Meteor.
+- Si no sabes la respuesta, invita cordialmente a dejar sus datos para que un asesor humano los contacte.
+
+Siempre inicia con un saludo amable y pregunta cómo puedes ayudar.
+`;
+
+router.post('/chat', async (req: Request, res: Response): Promise<any> => {
+  try {
+    if (!openaiApiKey) {
+      return res.status(500).json({ error: 'La API key de OpenAI no está configurada en el servidor.' });
+    }
+
+    const { messages, maxTokens } = req.body;
+    const fullMessages = [{ role: 'system', content: OPENAI_SYSTEM_PROMPT }, ...(messages || [])];
+
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      model: 'gpt-4o-mini',
+      messages: fullMessages,
+      max_tokens: maxTokens || 500
+    }, {
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return res.status(200).json({ content: response.data.choices[0].message.content });
+  } catch (error: any) {
+    console.error('Error al consultar OpenAI:', error?.response?.data || error.message);
+    return res.status(500).json({ error: 'Error al consultar el asistente de IA.', details: error.message });
+  }
 });
 
 export interface AuthenticatedRequest extends Request {
