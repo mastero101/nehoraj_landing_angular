@@ -1,6 +1,5 @@
 export const environment = {
     production: true,
-    openaiApiKey: 'apikeyOpenAI',
     meta: {
       phoneNumberId: 'tu_phone_number_id_produccion',
       accessToken: 'tu_access_token_produccion'
