@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogService } from '../../services/blog.service';
+import { OpenaiService } from '../../services/openai.service';
 import { BlogPost } from '../../models/blog.model';
 import { User } from '../../models/user.model';
 
@@ -44,7 +45,9 @@ export class BlogAdminComponent implements OnInit {
   resetSuccess = '';
   resetLoading = false;
 
-  // Formulario Artículos
+  // Formulario Artículos & Redacción Avanzada
+  @ViewChild('contentTextArea') contentTextArea!: ElementRef<HTMLTextAreaElement>;
+  editorTab: 'edit' | 'preview' = 'edit';
   editingPost: BlogPost = this.getEmptyPost();
   categories = ['IA', 'Software', 'Drones', 'Negocios'];
   tagsInput = '';
@@ -52,12 +55,27 @@ export class BlogAdminComponent implements OnInit {
   uploadingFile = false;
   uploadProgress = 0;
   uploadedUrl = '';
+  isDragging = false;
+
+  // Estadísticas del artículo
+  wordCount = 0;
+  charCount = 0;
+
+  // Asistente IA para redactores
+  showAiModal = false;
+  aiPrompt = '';
+  aiAction: 'draft' | 'improve' | 'summary' | 'title' = 'draft';
+  aiLoading = false;
+  aiError = '';
 
   // Lista de Posts para gestión
   postsList: BlogPost[] = [];
   listLoading = false;
 
-  constructor(public blogService: BlogService) {}
+  constructor(
+    public blogService: BlogService,
+    private openaiService: OpenaiService
+  ) {}
 
   ngOnInit(): void {
     if (this.blogService.isLoggedIn()) {
@@ -268,13 +286,221 @@ export class BlogAdminComponent implements OnInit {
   openCreateForm(): void {
     this.editingPost = this.getEmptyPost();
     this.tagsInput = '';
+    this.editorTab = 'edit';
+    this.updateStats();
     this.viewState = 'editor';
   }
 
   openEditForm(post: BlogPost): void {
     this.editingPost = { ...post };
     this.tagsInput = post.tags ? post.tags.join(', ') : '';
+    this.editorTab = 'edit';
+    this.updateStats();
     this.viewState = 'editor';
+  }
+
+  updateStats(): void {
+    const text = (this.editingPost.content || '').replace(/<[^>]*>/g, ' ').trim();
+    this.charCount = text.length;
+    this.wordCount = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
+    
+    // Auto calcular tiempo estimado de lectura
+    if (this.wordCount > 0) {
+      const mins = Math.max(1, Math.ceil(this.wordCount / 200));
+      this.editingPost.reading_time = `${mins} min`;
+    } else {
+      this.editingPost.reading_time = '1 min';
+    }
+  }
+
+  insertFormatting(startTag: string, endTag: string = ''): void {
+    const text = this.editingPost.content || '';
+    if (!this.contentTextArea?.nativeElement) {
+      this.editingPost.content = text + `${startTag}${endTag}`;
+      this.updateStats();
+      return;
+    }
+
+    const textarea = this.contentTextArea.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = text.substring(start, end) || 'Texto aquí';
+    const replacement = `${startTag}${selectedText}${endTag}`;
+
+    this.editingPost.content = text.substring(0, start) + replacement + text.substring(end);
+    this.updateStats();
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + startTag.length, start + startTag.length + selectedText.length);
+    }, 0);
+  }
+
+  insertBold(): void {
+    this.insertFormatting('<strong>', '</strong>');
+  }
+
+  insertItalic(): void {
+    this.insertFormatting('<em>', '</em>');
+  }
+
+  insertH2(): void {
+    this.insertFormatting('<h2 class="text-2xl font-bold text-gray-900 mt-6 mb-3">', '</h2>');
+  }
+
+  insertH3(): void {
+    this.insertFormatting('<h3 class="text-xl font-bold text-gray-800 mt-4 mb-2">', '</h3>');
+  }
+
+  insertQuote(): void {
+    this.insertFormatting('<blockquote class="p-4 my-4 border-l-4 border-blue-500 bg-blue-50/50 rounded-r-xl italic text-gray-700">', '</blockquote>');
+  }
+
+  insertList(): void {
+    this.insertFormatting('<ul class="list-disc list-inside space-y-1 my-3 text-gray-700">\n  <li>', '</li>\n</ul>');
+  }
+
+  insertCallout(): void {
+    this.insertFormatting('<div class="p-4 my-4 bg-gradient-to-r from-blue-50 to-sky-50 border-l-4 border-blue-600 rounded-r-2xl">\n  <p class="text-sm font-semibold text-blue-900">', '</p>\n</div>');
+  }
+
+  insertLink(): void {
+    this.insertFormatting('<a href="https://nehoraj.com" target="_blank" class="text-blue-600 font-semibold underline hover:text-blue-800">', '</a>');
+  }
+
+  // ==========================================
+  // ASISTENTE DE IA PARA REDACTORES
+  // ==========================================
+
+  openAiModal(action: 'draft' | 'improve' | 'summary' | 'title'): void {
+    this.aiAction = action;
+    this.aiError = '';
+    this.aiPrompt = '';
+    this.showAiModal = true;
+  }
+
+  closeAiModal(): void {
+    this.showAiModal = false;
+    this.aiLoading = false;
+    this.aiError = '';
+  }
+
+  async generateWithAi(): Promise<void> {
+    this.aiError = '';
+    this.aiLoading = true;
+
+    try {
+      if (this.aiAction === 'draft') {
+        if (!this.aiPrompt.trim()) {
+          this.aiError = 'Por favor escribe el tema o idea del artículo.';
+          this.aiLoading = false;
+          return;
+        }
+
+        const prompt = `Eres un redactor profesional de tecnología y negocios para Nehoraj.
+Genera un borrador completo de un artículo de blog sobre el tema: "${this.aiPrompt}".
+IMPORTANTE: Debes responder ÚNICAMENTE en formato JSON plano (sin bloques de código markdown como \`\`\`json) con esta estructura exacta:
+{
+  "title": "Título llamativo",
+  "excerpt": "Extracto o resumen de 2 oraciones para la tarjeta del blog",
+  "category": "IA" o "Software" o "Drones" o "Negocios",
+  "tags": ["Tag1", "Tag2"],
+  "content": "<p>Párrafo introductorio...</p><h2>Subtítulo 1</h2><p>Contenido detallado...</p><blockquote class=\\"p-4 my-4 border-l-4 border-blue-500 bg-blue-50/50 rounded-r-xl italic text-gray-700\\">Cita o frase destacada</blockquote><p>Conclusión...</p>"
+}`;
+
+        const raw = await this.openaiService.getResponse([{ role: 'user', content: prompt }], 1500);
+        let cleaned = raw.trim();
+        if (cleaned.startsWith('```json')) cleaned = cleaned.replace(/^```json/, '').replace(/```$/, '').trim();
+        if (cleaned.startsWith('```')) cleaned = cleaned.replace(/^```/, '').replace(/```$/, '').trim();
+
+        try {
+          const parsed = JSON.parse(cleaned);
+          if (parsed.title) this.editingPost.title = parsed.title;
+          if (parsed.excerpt) this.editingPost.excerpt = parsed.excerpt;
+          if (parsed.category && this.categories.includes(parsed.category)) this.editingPost.category = parsed.category;
+          if (parsed.tags && Array.isArray(parsed.tags)) this.tagsInput = parsed.tags.join(', ');
+          if (parsed.content) this.editingPost.content = parsed.content;
+        } catch {
+          // Si no es JSON válido, agregarlo como contenido directamente
+          this.editingPost.content = raw;
+        }
+
+        this.updateStats();
+        this.closeAiModal();
+      } else if (this.aiAction === 'summary') {
+        const text = (this.editingPost.content || '').replace(/<[^>]*>/g, ' ');
+        if (!text.trim()) {
+          this.aiError = 'El borrador está vacío. Escribe algo primero.';
+          this.aiLoading = false;
+          return;
+        }
+
+        const prompt = `Crea un extracto o resumen breve y muy atractivo (máximo 2 oraciones) para la tarjeta de previsualización del siguiente artículo:\n\n${text.substring(0, 2000)}`;
+        const result = await this.openaiService.getResponse([{ role: 'user', content: prompt }], 300);
+        this.editingPost.excerpt = result.trim().replace(/^["']|["']$/g, '');
+        this.closeAiModal();
+      } else if (this.aiAction === 'improve') {
+        if (!this.editingPost.content.trim()) {
+          this.aiError = 'El contenido está vacío.';
+          this.aiLoading = false;
+          return;
+        }
+
+        const prompt = `Mejora la redacción, la gramática y el formato HTML del siguiente artículo de blog para Nehoraj. Mención de marca profesional, estructura limpia con etiquetas HTML (<h2>, <p>, <strong>, <blockquote>, <ul>, <li>). Devuelve ÚNICAMENTE el código HTML mejorado:\n\n${this.editingPost.content}`;
+        const result = await this.openaiService.getResponse([{ role: 'user', content: prompt }], 1500);
+        let cleaned = result.trim();
+        if (cleaned.startsWith('```html')) cleaned = cleaned.replace(/^```html/, '').replace(/```$/, '').trim();
+        if (cleaned.startsWith('```')) cleaned = cleaned.replace(/^```/, '').replace(/```$/, '').trim();
+
+        this.editingPost.content = cleaned;
+        this.updateStats();
+        this.closeAiModal();
+      } else if (this.aiAction === 'title') {
+        const text = (this.editingPost.content || this.editingPost.excerpt || '').replace(/<[^>]*>/g, ' ');
+        if (!text.trim()) {
+          this.aiError = 'Escribe primero algo de contenido o extracto.';
+          this.aiLoading = false;
+          return;
+        }
+
+        const prompt = `Genera un título muy llamativo, profesional y optimizado para SEO para un artículo de blog sobre el siguiente tema:\n\n${text.substring(0, 1500)}`;
+        const result = await this.openaiService.getResponse([{ role: 'user', content: prompt }], 150);
+        this.editingPost.title = result.trim().replace(/^["']|["']$/g, '');
+        this.closeAiModal();
+      }
+    } catch (err: any) {
+      console.error('Error al consultar IA:', err);
+      this.aiError = 'Error al comunicar con la IA: ' + (err.message || 'Error desconocido.');
+    } finally {
+      this.aiLoading = false;
+    }
+  }
+
+  // ==========================================
+  // DRAG AND DROP DE ARCHIVOS
+  // ==========================================
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDropFile(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      this.uploadSelectedFile(file);
+    }
   }
 
   onSavePost(): void {
@@ -328,6 +554,13 @@ export class BlogAdminComponent implements OnInit {
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
+    if (file) {
+      this.uploadSelectedFile(file);
+      event.target.value = '';
+    }
+  }
+
+  uploadSelectedFile(file: File): void {
     if (!file) return;
 
     // Verificar tamaño antes de subir
@@ -336,11 +569,7 @@ export class BlogAdminComponent implements OnInit {
       const confirmar = confirm(
         `El archivo pesa ${fileSizeMB.toFixed(2)}MB y supera el límite de 4.5MB.\n\n¿Quieres continuar de todos modos? (Solo funcionará en entorno local)`
       );
-      if (!confirmar) {
-        // Resetear el input de archivo
-        event.target.value = '';
-        return;
-      }
+      if (!confirmar) return;
     }
 
     this.uploadingFile = true;

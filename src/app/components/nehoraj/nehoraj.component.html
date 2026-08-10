@@ -780,14 +780,17 @@
     </div>
   </footer>
 
-  <!-- Botón para abrir el chat -->
-  <button (click)="toggleChat()" class="fixed z-50 p-2 text-white bg-blue-500 rounded-full shadow-lg md:p-3 hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50
-                bottom-20 right-4
-                sm:bottom-24 sm:right-6
-                md:bottom-16 md:right-8
-                lg:bottom-20 lg:right-10">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <!-- Botón flotante con icono de WhatsApp para abrir el chatbot -->
+  <button (click)="toggleChat()"
+          title="Abrir Asistente Virtual"
+          aria-label="Abrir Asistente Virtual"
+          class="fixed z-50 p-3 text-white bg-[#25D366] hover:bg-[#20ba5a] rounded-full shadow-2xl transition duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-green-300 flex items-center justify-center
+                 bottom-6 right-4
+                 sm:bottom-8 sm:right-6
+                 md:bottom-8 md:right-8
+                 lg:bottom-10 lg:right-10">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 md:w-8 md:h-8 fill-current" viewBox="0 0 24 24">
+      <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.76.459 3.474 1.33 4.982l-1.412 5.16 5.283-1.385a9.945 9.945 0 0 0 4.789 1.227h.004c5.505 0 9.988-4.478 9.989-9.984 0-2.667-1.037-5.176-2.922-7.062a9.923 9.923 0 0 0-7.061-2.922zm5.72 14.156c-.236.664-1.173 1.214-1.916 1.374-.51.11-1.175.197-3.419-.731-2.871-1.187-4.717-4.103-4.86-4.294-.143-.191-1.164-1.549-1.164-2.953 0-1.404.733-2.095.993-2.38.26-.285.568-.356.758-.356.19 0 .379.002.544.01.175.008.411-.066.643.491.237.57.806 1.967.876 2.11.07.142.118.308.024.498-.095.19-.142.308-.285.474-.142.167-.3.372-.428.5-.143.142-.292.298-.126.583.167.285.742 1.224 1.593 1.982 1.096.976 2.019 1.279 2.304 1.421.285.143.451.119.617-.071.167-.19.712-.83.902-1.115.19-.285.38-.237.641-.142.261.095 1.659.782 1.944.925.285.143.475.214.546.333.07.118.07.688-.166 1.352z"/>
     </svg>
   </button>
 
