@@ -92,6 +92,8 @@ export class BlogAdminComponent implements OnInit {
       excerpt: '',
       content: '',
       category: 'IA',
+      author_name: '',
+      author_role: '',
       cover_image: '',
       tags: [],
       reading_time: '3 min'

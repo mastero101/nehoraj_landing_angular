@@ -428,6 +428,31 @@
           </div>
         </div>
 
+        <!-- Datos del Autor -->
+        <div class="grid gap-6 md:grid-cols-2 mb-6">
+          <div>
+            <label for="post_author_name" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Nombre del Autor</label>
+            <input
+              type="text"
+              id="post_author_name"
+              name="post_author_name"
+              [(ngModel)]="editingPost.author_name"
+              placeholder="Ej: Andrés G. Carpizo"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+
+          <div>
+            <label for="post_author_role" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Cargo del Autor</label>
+            <input
+              type="text"
+              id="post_author_role"
+              name="post_author_role"
+              [(ngModel)]="editingPost.author_role"
+              placeholder="Ej: CEO & Founder de Nehoraj Group"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+        </div>
+
         <!-- EDITORIAL TOOLBAR & TEXTAREA -->
         <div class="mb-6">
           <div class="flex flex-wrap items-center justify-between gap-2 bg-gray-100 border border-b-0 border-gray-200 rounded-t-2xl p-2.5">
@@ -517,6 +542,18 @@
         <p class="text-lg text-gray-600 leading-relaxed mb-6 italic border-l-4 border-blue-500 pl-4 bg-blue-50/30 py-2 rounded-r-xl">
           {{ editingPost.excerpt || 'Este es el resumen del artículo que se mostrará a los lectores...' }}
         </p>
+
+        <!-- Autor del Artículo -->
+        <div *ngIf="editingPost.author_name" class="flex items-center gap-4 bg-blue-50/30 border border-blue-100/50 p-4 rounded-2xl mb-8">
+          <img
+            [src]="editingPost.author_avatar || 'assets/img/cofounder-1.png'"
+            [alt]="editingPost.author_name"
+            class="w-12 h-12 rounded-full object-cover ring-4 ring-white shadow-md">
+          <div>
+            <p class="text-sm font-bold text-gray-900 leading-tight mb-0.5">{{ editingPost.author_name }}</p>
+            <p class="text-xs text-blue-600 font-semibold">{{ editingPost.author_role || 'Colaborador Estratégico' }}</p>
+          </div>
+        </div>
 
         <!-- Imagen de Portada -->
         <div *ngIf="editingPost.cover_image" class="mb-8 rounded-2xl overflow-hidden shadow-md max-h-96">
