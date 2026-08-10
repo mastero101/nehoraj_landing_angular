@@ -18,8 +18,9 @@ export class BlogAdminComponent implements OnInit {
   @Output() closeAdmin = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
 
-  // Estados de vista: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media'
-  viewState: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media' = 'login';
+  // Estados de vista: 'login' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media'
+  // El registro público de redactores se eliminó por seguridad: ahora solo un admin puede crear cuentas.
+  viewState: 'login' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media' = 'login';
 
   // Formulario Auth
   username = '';
@@ -45,6 +46,15 @@ export class BlogAdminComponent implements OnInit {
   resetError = '';
   resetSuccess = '';
   resetLoading = false;
+
+  // Alta de nuevos redactores (solo admin)
+  showCreateRedactor = false;
+  newRedactorUsername = '';
+  newRedactorPassword = '';
+  newRedactorRole: 'author' | 'admin' = 'author';
+  createRedactorError = '';
+  createRedactorSuccess = '';
+  createRedactorLoading = false;
 
   // Formulario Artículos & Redacción Avanzada
   @ViewChild('contentTextArea') contentTextArea!: ElementRef<HTMLTextAreaElement>;
@@ -139,28 +149,6 @@ export class BlogAdminComponent implements OnInit {
     });
   }
 
-  onRegister(event?: Event): void {
-    event?.preventDefault();
-
-    if (!this.username || !this.password) return;
-    this.authLoading = true;
-    this.authError = '';
-    this.authSuccess = '';
-
-    this.blogService.register(this.username, this.password).subscribe({
-      next: () => {
-        this.authLoading = false;
-        this.authSuccess = '¡Registro exitoso! Ya puedes iniciar sesión.';
-        this.viewState = 'login';
-        this.password = '';
-      },
-      error: (err) => {
-        this.authLoading = false;
-        this.authError = err.error?.error || 'Error al registrar el redactor.';
-      }
-    });
-  }
-
   onLogout(): void {
     this.blogService.logout();
     this.viewState = 'login';
@@ -223,6 +211,46 @@ export class BlogAdminComponent implements OnInit {
     this.resetTargetUser = null;
     this.viewState = 'admin-users';
     this.loadUsers();
+  }
+
+  openCreateRedactor(): void {
+    this.newRedactorUsername = '';
+    this.newRedactorPassword = '';
+    this.newRedactorRole = 'author';
+    this.createRedactorError = '';
+    this.createRedactorSuccess = '';
+    this.showCreateRedactor = true;
+  }
+
+  cancelCreateRedactor(): void {
+    this.showCreateRedactor = false;
+    this.createRedactorError = '';
+  }
+
+  onCreateRedactor(event?: Event): void {
+    event?.preventDefault();
+    this.createRedactorError = '';
+    this.createRedactorSuccess = '';
+
+    if (!this.newRedactorUsername.trim() || !this.newRedactorPassword) return;
+    if (this.newRedactorPassword.length < 6) {
+      this.createRedactorError = 'La contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+
+    this.createRedactorLoading = true;
+    this.blogService.register(this.newRedactorUsername.trim(), this.newRedactorPassword, this.newRedactorRole).subscribe({
+      next: () => {
+        this.createRedactorLoading = false;
+        this.createRedactorSuccess = `Redactor "${this.newRedactorUsername.trim()}" creado exitosamente.`;
+        this.showCreateRedactor = false;
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.createRedactorLoading = false;
+        this.createRedactorError = err.error?.error || 'Error al crear el redactor.';
+      }
+    });
   }
 
   loadUsers(): void {

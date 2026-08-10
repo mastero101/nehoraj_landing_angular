@@ -76,77 +76,17 @@
           class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
       </div>
 
-      <button 
-        type="submit" 
-        [disabled]="!loginForm.form.valid || authLoading" 
+      <button
+        type="submit"
+        [disabled]="!loginForm.form.valid || authLoading"
         class="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-600 transition-all disabled:opacity-50">
         {{ authLoading ? 'Autenticando...' : 'Iniciar Sesión' }}
       </button>
     </form>
 
-    <div class="text-center mt-6 pt-4 border-t border-gray-100">
-      <button 
-        (click)="viewState = 'register'; authError = ''; authSuccess = ''; password = ''" 
-        class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
-        ✨ ¿No tienes cuenta? Registra un nuevo redactor
-      </button>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- 2. VISTA DE REGISTRO -->
-  <!-- ========================================== -->
-  <div *ngIf="viewState === 'register'" class="max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-blue-50/50 p-8">
-    <div class="text-center mb-6">
-      <span class="text-4xl block mb-2">✍️</span>
-      <h3 class="text-2xl font-bold text-gray-900">Registrar Redactor</h3>
-      <p class="text-gray-500 text-sm mt-1">Crea un nuevo acceso de escritura para el blog.</p>
-    </div>
-
-    <form (ngSubmit)="onRegister($event)" #registerForm="ngForm">
-      <div *ngIf="authError" class="mb-4 p-3.5 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl">
-        {{ authError }}
-      </div>
-
-      <div class="mb-4">
-        <label for="reg_username" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Nuevo Usuario</label>
-        <input 
-          type="text" 
-          id="reg_username" 
-          name="reg_username" 
-          [(ngModel)]="username" 
-          required 
-          placeholder="Ej: andres_nehoraj" 
-          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-      </div>
-
-      <div class="mb-6">
-        <label for="reg_password" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contraseña de Acceso</label>
-        <input 
-          type="password" 
-          id="reg_password" 
-          name="reg_password" 
-          [(ngModel)]="password" 
-          required 
-          placeholder="••••••••" 
-          class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-      </div>
-
-      <button 
-        type="submit" 
-        [disabled]="!registerForm.form.valid || authLoading" 
-        class="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-sky-600 transition-all disabled:opacity-50">
-        {{ authLoading ? 'Registrando...' : 'Registrar Redactor' }}
-      </button>
-    </form>
-
-    <div class="text-center mt-6 pt-4 border-t border-gray-100">
-      <button 
-        (click)="viewState = 'login'; authError = ''; authSuccess = ''; password = ''" 
-        class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
-        🔑 ¿Ya tienes cuenta? Iniciar Sesión
-      </button>
-    </div>
+    <p class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-100">
+      ¿Necesitas una cuenta? Pídele a un administrador que te la cree desde "Gestionar Redactores".
+    </p>
   </div>
 
   <!-- ========================================== -->
@@ -658,11 +598,21 @@
   <!-- 6. GESTIONAR REDACTORES (RESETEO POR ADMIN) -->
   <!-- ========================================== -->
   <div *ngIf="viewState === 'admin-users'" class="bg-white rounded-3xl shadow-xl border border-blue-50/50 p-6 md:p-8">
-    <div class="mb-8">
-      <h3 class="text-2xl font-bold text-gray-900">Gestionar Redactores</h3>
-      <p class="text-gray-500 text-sm mt-0.5">Como administrador, puedes resetear la contraseña de cualquier redactor si la olvidó. Comparte la nueva contraseña con él directamente (WhatsApp, en persona, etc.).</p>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900">Gestionar Redactores</h3>
+        <p class="text-gray-500 text-sm mt-0.5">Crea nuevas cuentas de redactor y resetea contraseñas si un redactor la olvidó. Por seguridad, el registro público está deshabilitado: solo un admin puede dar de alta cuentas.</p>
+      </div>
+      <button
+        (click)="openCreateRedactor()"
+        class="px-4 h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md transition-colors whitespace-nowrap">
+        ➕ Nuevo Redactor
+      </button>
     </div>
 
+    <div *ngIf="createRedactorSuccess" class="mb-6 p-3.5 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded-r-xl">
+      {{ createRedactorSuccess }}
+    </div>
     <div *ngIf="resetSuccess" class="mb-6 p-3.5 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded-r-xl">
       {{ resetSuccess }}
     </div>
@@ -741,6 +691,72 @@
               [disabled]="!resetForm.form.valid || resetLoading"
               class="px-5 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transition-colors disabled:opacity-50">
               {{ resetLoading ? 'Guardando...' : 'Confirmar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de alta de nuevo redactor -->
+    <div *ngIf="showCreateRedactor" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+        <h4 class="text-lg font-bold text-gray-900 mb-1">Nuevo redactor</h4>
+        <p class="text-sm text-gray-500 mb-4">Crea el acceso y comparte la contraseña directamente con la persona (WhatsApp, en persona, etc.).</p>
+
+        <div *ngIf="createRedactorError" class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded-r-xl">
+          {{ createRedactorError }}
+        </div>
+
+        <form (ngSubmit)="onCreateRedactor($event)" #createRedactorForm="ngForm">
+          <div class="mb-4">
+            <label for="new_redactor_username" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Usuario</label>
+            <input
+              type="text"
+              id="new_redactor_username"
+              name="new_redactor_username"
+              [(ngModel)]="newRedactorUsername"
+              required
+              placeholder="Ej: andres_nehoraj"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+
+          <div class="mb-4">
+            <label for="new_redactor_password" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contraseña</label>
+            <input
+              type="password"
+              id="new_redactor_password"
+              name="new_redactor_password"
+              [(ngModel)]="newRedactorPassword"
+              required
+              minlength="6"
+              placeholder="Mínimo 6 caracteres"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+
+          <div class="mb-5">
+            <label for="new_redactor_role" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Rol</label>
+            <select
+              id="new_redactor_role"
+              name="new_redactor_role"
+              [(ngModel)]="newRedactorRole"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+              <option value="author">Redactor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+
+          <div class="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              (click)="cancelCreateRedactor()"
+              class="px-5 h-11 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="!createRedactorForm.form.valid || createRedactorLoading"
+              class="px-5 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transition-colors disabled:opacity-50">
+              {{ createRedactorLoading ? 'Creando...' : 'Crear Redactor' }}
             </button>
           </div>
         </form>

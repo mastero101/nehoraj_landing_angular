@@ -123,12 +123,21 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
   });
 }
 
-router.post('/auth/register', async (req: Request, res: Response): Promise<any> => {
+// Alta de redactores (solo admin) - antes era un registro público,
+// se cierra por seguridad: cualquiera podía crearse una cuenta y publicar.
+router.post('/auth/register', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {
-    const { username, password } = req.body;
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede crear nuevos redactores.' });
+    }
+
+    const { username, password, role } = req.body;
 
     if (!username || !password) {
       return res.status(400).json({ error: 'Usuario y contraseña son requeridos.' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres.' });
     }
 
     const { data: existingUser } = await supabase!
@@ -146,7 +155,7 @@ router.post('/auth/register', async (req: Request, res: Response): Promise<any> 
 
     const { data: newUser, error: insertError } = await supabase!
       .from('blog_users')
-      .insert([{ username, password_hash: passwordHash, role: 'author' }])
+      .insert([{ username, password_hash: passwordHash, role: role === 'admin' ? 'admin' : 'author' }])
       .select('id, username, role')
       .single();
 
@@ -154,10 +163,10 @@ router.post('/auth/register', async (req: Request, res: Response): Promise<any> 
       throw insertError;
     }
 
-    return res.status(201).json({ message: 'Usuario registrado exitosamente.', user: newUser });
+    return res.status(201).json({ message: 'Redactor creado exitosamente.', user: newUser });
   } catch (error: any) {
-    console.error('Error al registrar usuario:', error);
-    return res.status(500).json({ error: 'Error del servidor al registrar el usuario.', details: error.message });
+    console.error('Error al crear redactor:', error);
+    return res.status(500).json({ error: 'Error del servidor al crear el redactor.', details: error.message });
   }
 });
 

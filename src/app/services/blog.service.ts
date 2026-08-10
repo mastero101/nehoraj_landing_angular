@@ -50,8 +50,12 @@ export class BlogService {
   // AUTENTICACIÓN
   // ==========================================
 
-  register(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/register`, { username, password });
+  register(username: string, password: string, role: string = 'author'): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/auth/register`,
+      { username, password, role },
+      { headers: this.getHeaders() }
+    );
   }
 
   login(username: string, password: string): Observable<AuthResponse> {
