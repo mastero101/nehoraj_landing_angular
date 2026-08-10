@@ -131,7 +131,6 @@ export class NehorajComponent implements OnInit {
     }
   ];
 
-  menuOpen = false;
   currentIndex = 0;
   isChatVisible: boolean = false;
   isModalOpen = false;
@@ -146,8 +145,31 @@ export class NehorajComponent implements OnInit {
     this.syncBlogStateFromUrl();
   }
 
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+  // Los modales se renderizan al inicio de <main>: si se abren con la página
+  // desplazada, hay que subir primero o el anclaje de scroll del navegador
+  // deja la vista más abajo de lo esperado.
+  private scrollWindowToTop() {
+    if (typeof window === 'undefined') return;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  // Las secciones de #features/#solutions/#contact solo existen en el DOM
+  // cuando currentBlogView === 'none'; si el enlace se usa desde el blog,
+  // primero hay que salir del blog y esperar el próximo render para poder
+  // localizar la sección y desplazarse hasta ella.
+  goToSection(sectionId: string): void {
+    if (typeof document === 'undefined') return;
+
+    if (this.currentBlogView !== 'none') {
+      this.exitBlog();
+      setTimeout(() => this.scrollToSectionId(sectionId), 0);
+    } else {
+      this.scrollToSectionId(sectionId);
+    }
+  }
+
+  private scrollToSectionId(sectionId: string): void {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
   }
 
   toggleChat() {
@@ -156,11 +178,17 @@ export class NehorajComponent implements OnInit {
 
   toggleModal() {
     this.isModalOpen = !this.isModalOpen;
+    if (this.isModalOpen) {
+      this.scrollWindowToTop();
+    }
   }
 
   toggleModal2() {
     this.isModalOpen2 = !this.isModalOpen2;
     this.isModalOpen = false;
+    if (this.isModalOpen2) {
+      this.scrollWindowToTop();
+    }
   }
 
   toggleModal3() {
@@ -202,13 +230,10 @@ export class NehorajComponent implements OnInit {
   mensaje: string = '';
 
   navigateToBlog(): void {
+    this.scrollWindowToTop();
     this.currentBlogView = 'list';
-    this.menuOpen = false;
     this.selectedPostId = '';
     this.updateBrowserUrl();
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }
 
   showPostDetail(id: string): void {

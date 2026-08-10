@@ -1,6 +1,6 @@
 <div class="flex flex-col min-h-[100dvh] bg-[#fff] text-[#000]">
   
-  <header class="px-4 lg:px-8 h-16 flex items-center justify-between bg-white mt-4 sm:mt-1">
+  <header class="site-header sticky top-0 z-50 px-4 lg:px-8 py-3 md:h-16 md:py-0 items-center md:justify-between gap-3 md:gap-0 bg-white/95 backdrop-blur-md border-b border-gray-100 mt-4 sm:mt-1">
     <a href="#" class="flex items-center justify-center transition-transform hover:scale-105">
       <svg
         class="h-8 w-8 text-sky-500"
@@ -19,59 +19,39 @@
         <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
         <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
       </svg>
-      <span class="ml-2 text-2xl font-bold text-gray-800">Nehoraj</span>
+      <span class="ml-2 text-xl sm:text-2xl font-bold text-gray-800">Nehoraj</span>
     </a>
-  
-    <button class="md:hidden" (click)="toggleMenu()">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-      </svg>
-    </button>
-  
-    <nav class="hidden md:flex gap-4 sm:gap-6 bg-white/80 rounded-full shadow-lg px-6 py-2 border border-blue-100 backdrop-blur-md transition-all duration-300">
-      <button *ngIf="currentBlogView !== 'none'" (click)="exitBlog()" class="nav-link text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-300 relative group mx-2">
+
+    <nav class="w-full md:w-auto flex flex-wrap justify-center gap-x-2 gap-y-1.5 sm:gap-x-4 md:gap-6 bg-white/80 rounded-2xl md:rounded-full shadow-lg px-2 sm:px-4 md:px-6 py-2 border border-blue-100 backdrop-blur-md transition-all duration-300">
+      <button *ngIf="currentBlogView !== 'none'" (click)="exitBlog()" class="nav-link text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1 font-bold">🏠 Inicio</span>
       </button>
-      <a *ngIf="currentBlogView === 'none'" href="#features" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button (click)="goToSection('features')" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Servicios</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-      </a>
-      <button (click)="toggleModal2()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      </button>
+      <button (click)="toggleModal2()" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Responsabilidad Social</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </button>
-      <button (click)="toggleModal()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button (click)="toggleModal()" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Misión y Visión</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </button>
-      <a *ngIf="currentBlogView === 'none'" href="#solutions" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button (click)="goToSection('solutions')" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Soluciones</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-      </a>
-      <button (click)="navigateToBlog()" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      </button>
+      <button (click)="navigateToBlog()" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Blog</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
       </button>
-      <a *ngIf="currentBlogView === 'none'" href="#contact" class="nav-link text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-2">
+      <button (click)="goToSection('contact')" class="nav-link text-xs sm:text-sm font-medium text-gray-600 hover:text-blue-500 transition-colors duration-300 relative group mx-1 sm:mx-2">
         <span class="pb-1">Contacto</span>
         <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-      </a>
+      </button>
     </nav>
   </header>
-  
-  <nav class="md:hidden transition-all duration-300 ease-in-out" [class.hidden]="!menuOpen">
-    <a *ngIf="currentBlogView !== 'none'" (click)="exitBlog(); toggleMenu()" class="block py-2 px-4 text-lg text-center font-bold text-blue-600 hover:bg-gray-100">🏠 Inicio</a>
-    <a *ngIf="currentBlogView === 'none'" href="#features" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Servicios</a>
-    <a (click)="toggleModal2(); toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
-      Responsabilidad Social
-    </a>
-    <a (click)="toggleModal(); toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">
-      Misión y Visión
-    </a>
-    <a *ngIf="currentBlogView === 'none'" href="#solutions" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Soluciones</a>
-    <a (click)="navigateToBlog(); toggleMenu()" class="block py-2 px-4 text-lg text-center font-semibold text-blue-600 hover:bg-gray-100">Blog</a>
-    <a *ngIf="currentBlogView === 'none'" href="#contact" (click)="toggleMenu()" class="block py-2 px-4 text-lg text-center hover:bg-gray-100">Contacto</a>
-  </nav>
 
   <main class="flex-1">
 
@@ -549,15 +529,15 @@
           <!-- Miembro 1 -->
           <div class="group relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
             <div class="relative">
-              <div class="h-64 overflow-hidden">
-                <img src="../../../assets/img/cofounder-1.png" alt="Andrés Carpizo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <div class="aspect-[4/5] overflow-hidden">
+                <img src="../../../assets/img/A.Carpizo.jpeg" alt="Andrés Carpizo" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
               </div>
               <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <img src="../../../assets/img/cofounder-1.png" alt="Andrés Carpizo" class="w-full h-full object-cover">
+                <img src="../../../assets/img/A.Carpizo.jpeg" alt="Andrés Carpizo" class="w-full h-full object-cover">
               </div>
             </div>
             <div class="pt-10 pb-6 px-6 text-center">
-              <h3 class="text-xl font-bold text-gray-900">Andrés Carpizo</h3>
+              <h3 class="text-xl font-bold text-gray-900">AndrésG. Carpizo</h3>
               <p class="text-blue-600 font-medium mb-4">Founder & CEO</p>
               <p class="text-gray-600 text-sm mb-4">
                 Con 8 años de experiencia en el sector energético y como presidente del comité de empresas
@@ -571,7 +551,7 @@
           <!-- Miembro 2 -->
           <div class="group relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
             <div class="relative">
-              <div class="h-64 overflow-hidden">
+              <div class="aspect-[4/5] overflow-hidden">
                 <img src="../../../assets/img/cofounder-3.png" alt="René Sandoval" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
               </div>
               <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -591,7 +571,7 @@
           <!-- Miembro 3 -->
           <div class="group relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
             <div class="relative">
-              <div class="h-64 overflow-hidden">
+              <div class="aspect-[4/5] overflow-hidden">
                 <img src="../../../assets/img/cofounder-4.png" alt="Alejandro Kratc" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
               </div>
               <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -612,7 +592,7 @@
           <!-- Miembro 4 -->
           <div class="group relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
             <div class="relative">
-              <div class="h-64 overflow-hidden">
+              <div class="aspect-[4/5] overflow-hidden">
                 <img src="../../../assets/img/cofounder-5.png" alt="Iván Alegría" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
               </div>
               <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">

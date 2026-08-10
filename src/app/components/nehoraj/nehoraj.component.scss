@@ -86,28 +86,20 @@
   }
 }
 
-@media (max-width: 768px) {
-  header {
-    @apply flex-col items-center;
-  }
+/* ============================================================
+   Navegación
+   ============================================================ */
 
-  .nav-link {
-    @apply block w-full py-4 text-lg text-center border-b border-gray-200;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-  
-  nav.md\\:hidden {
-    @apply block w-full text-center;
-    transition: max-height 0.3s ease-in-out;
-    max-height: 0;
-    overflow: hidden;
-  }
+/* La regla `.flex-col` de este archivo (heredada de versiones anteriores)
+   gana por especificidad a la utilidad `md:flex-row` de Tailwind, así que
+   la dirección del flex se fija aquí directamente en vez de con clases. */
+.site-header {
+  padding-top: env(safe-area-inset-top);
+  display: flex;
+  flex-direction: column;
 
-  nav.md\\:hidden:not(.hidden) {
-    max-height: 500px; /* Ajusta este valor según el contenido */
+  @media (min-width: 768px) {
+    flex-direction: row;
   }
 }
 
