@@ -483,8 +483,6 @@ const getPostByIdHandler = async (req: Request, res: Response): Promise<any> => 
 };
 
 router.get('/blog/:id', getPostByIdHandler);
-// Alias para runtimes serverless donde el prefijo puede llegar recortado.
-router.get('/:id', getPostByIdHandler);
 
 router.post('/blog', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {
@@ -674,5 +672,9 @@ router.delete('/social-images/:id', authenticateToken as any, async (req: Authen
     return res.status(500).json({ error: 'Error al eliminar la imagen.', details: error.message });
   }
 });
+
+// Alias para runtimes serverless donde el prefijo /blog puede llegar recortado.
+// Debe ir al final: es un comodín y no puede interceptar rutas más específicas.
+router.get('/:id', getPostByIdHandler);
 
 export default router;
