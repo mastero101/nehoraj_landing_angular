@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogService } from '../../services/blog.service';
 import { BlogPost } from '../../models/blog.model';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-blog-admin',
@@ -15,8 +16,8 @@ export class BlogAdminComponent implements OnInit {
   @Output() closeAdmin = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
 
-  // Estados de vista: 'login' | 'register' | 'dashboard' | 'editor'
-  viewState: 'login' | 'register' | 'dashboard' | 'editor' = 'login';
+  // Estados de vista: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users'
+  viewState: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' = 'login';
 
   // Formulario Auth
   username = '';
@@ -24,6 +25,24 @@ export class BlogAdminComponent implements OnInit {
   authError = '';
   authSuccess = '';
   authLoading = false;
+
+  // Cambio de contraseña (autoservicio)
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  changePasswordError = '';
+  changePasswordSuccess = '';
+  changePasswordLoading = false;
+
+  // Reseteo de contraseña por admin
+  usersList: User[] = [];
+  usersLoading = false;
+  usersError = '';
+  resetTargetUser: User | null = null;
+  resetNewPassword = '';
+  resetError = '';
+  resetSuccess = '';
+  resetLoading = false;
 
   // Formulario Artículos
   editingPost: BlogPost = this.getEmptyPost();
@@ -111,6 +130,117 @@ export class BlogAdminComponent implements OnInit {
     this.blogService.logout();
     this.viewState = 'login';
     this.postsList = [];
+  }
+
+  get isAdmin(): boolean {
+    return this.blogService.currentUserValue?.role === 'admin';
+  }
+
+  // ==========================================
+  // CAMBIO DE CONTRASEÑA (AUTOSERVICIO)
+  // ==========================================
+
+  openChangePassword(): void {
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.changePasswordError = '';
+    this.changePasswordSuccess = '';
+    this.viewState = 'change-password';
+  }
+
+  onChangePassword(event?: Event): void {
+    event?.preventDefault();
+    this.changePasswordError = '';
+    this.changePasswordSuccess = '';
+
+    if (this.newPassword !== this.confirmPassword) {
+      this.changePasswordError = 'Las contraseñas nuevas no coinciden.';
+      return;
+    }
+    if (this.newPassword.length < 6) {
+      this.changePasswordError = 'La nueva contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+
+    this.changePasswordLoading = true;
+    this.blogService.changePassword(this.currentPassword, this.newPassword).subscribe({
+      next: () => {
+        this.changePasswordLoading = false;
+        this.changePasswordSuccess = 'Contraseña actualizada correctamente.';
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        this.changePasswordLoading = false;
+        this.changePasswordError = err.error?.error || 'Error al cambiar la contraseña.';
+      }
+    });
+  }
+
+  // ==========================================
+  // RESETEO DE CONTRASEÑA POR ADMIN
+  // ==========================================
+
+  openAdminUsers(): void {
+    this.usersError = '';
+    this.resetTargetUser = null;
+    this.viewState = 'admin-users';
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.usersLoading = true;
+    this.usersError = '';
+    this.blogService.getUsers().subscribe({
+      next: (data) => {
+        this.usersList = data;
+        this.usersLoading = false;
+      },
+      error: (err) => {
+        this.usersLoading = false;
+        this.usersError = err.error?.error || 'Error al cargar los redactores.';
+      }
+    });
+  }
+
+  openResetFor(user: User): void {
+    this.resetTargetUser = user;
+    this.resetNewPassword = '';
+    this.resetError = '';
+    this.resetSuccess = '';
+  }
+
+  cancelReset(): void {
+    this.resetTargetUser = null;
+    this.resetNewPassword = '';
+    this.resetError = '';
+  }
+
+  onAdminResetPassword(event?: Event): void {
+    event?.preventDefault();
+    if (!this.resetTargetUser) return;
+
+    this.resetError = '';
+    if (this.resetNewPassword.length < 6) {
+      this.resetError = 'La nueva contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+
+    this.resetLoading = true;
+    this.blogService.adminResetPassword(this.resetTargetUser.id, this.resetNewPassword).subscribe({
+      next: () => {
+        this.resetLoading = false;
+        this.resetSuccess = `Contraseña de "${this.resetTargetUser?.username}" reseteada correctamente.`;
+        this.resetTargetUser = null;
+        this.resetNewPassword = '';
+      },
+      error: (err) => {
+        this.resetLoading = false;
+        this.resetError = err.error?.error || 'Error al resetear la contraseña.';
+      }
+    });
   }
 
   // ==========================================

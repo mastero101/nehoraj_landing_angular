@@ -74,6 +74,30 @@ export class BlogService {
     this.currentUserSubject.next(null);
   }
 
+  get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/auth/change-password`,
+      { currentPassword, newPassword },
+      { headers: this.getHeaders() }
+    );
+  }
+
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/auth/users`, { headers: this.getHeaders() });
+  }
+
+  adminResetPassword(userId: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/auth/admin-reset-password`,
+      { userId, newPassword },
+      { headers: this.getHeaders() }
+    );
+  }
+
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       return !!localStorage.getItem('blog_token');

@@ -258,6 +258,109 @@ router.post('/auth/login', async (req: Request, res: Response): Promise<any> => 
   }
 });
 
+// Cambio de contraseña por el propio usuario autenticado
+router.post('/auth/change-password', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'La contraseña actual y la nueva son requeridas.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres.' });
+    }
+
+    const { data: user, error: selectError } = await supabase!
+      .from('blog_users')
+      .select('id, password_hash')
+      .eq('id', req.user!.userId)
+      .single();
+
+    if (selectError || !user) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'La contraseña actual es incorrecta.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    const { error: updateError } = await supabase!
+      .from('blog_users')
+      .update({ password_hash: passwordHash })
+      .eq('id', req.user!.userId);
+
+    if (updateError) throw updateError;
+
+    return res.status(200).json({ message: 'Contraseña actualizada exitosamente.' });
+  } catch (error: any) {
+    console.error('Error al cambiar la contraseña:', error);
+    return res.status(500).json({ error: 'Error del servidor al cambiar la contraseña.', details: error.message });
+  }
+});
+
+// Lista de redactores (solo admin), para el flujo de reseteo de contraseña
+router.get('/auth/users', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede ver la lista de usuarios.' });
+    }
+
+    const { data: users, error } = await supabase!
+      .from('blog_users')
+      .select('id, username, role, created_at')
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    return res.status(200).json(users || []);
+  } catch (error: any) {
+    console.error('Error al listar usuarios:', error);
+    return res.status(500).json({ error: 'Error al listar los usuarios.', details: error.message });
+  }
+});
+
+// Reseteo de contraseña de otro redactor (solo admin, sin necesidad de correo)
+router.post('/auth/admin-reset-password', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede resetear contraseñas.' });
+    }
+
+    const { userId, newPassword } = req.body;
+
+    if (!userId || !newPassword) {
+      return res.status(400).json({ error: 'El usuario y la nueva contraseña son requeridos.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    const { data: updatedUser, error: updateError } = await supabase!
+      .from('blog_users')
+      .update({ password_hash: passwordHash })
+      .eq('id', userId)
+      .select('id, username, role')
+      .single();
+
+    if (updateError) throw updateError;
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    return res.status(200).json({ message: 'Contraseña reseteada exitosamente.', user: updatedUser });
+  } catch (error: any) {
+    console.error('Error al resetear la contraseña:', error);
+    return res.status(500).json({ error: 'Error del servidor al resetear la contraseña.', details: error.message });
+  }
+});
+
 // ==========================================
 // ENDPOINTS DEL BLOG (CRUD)
 // ==========================================
