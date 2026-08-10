@@ -162,8 +162,9 @@
           <button
             type="button"
             (click)="addComment()"
-            class="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors">
-            Publicar comentario
+            [disabled]="commentSubmitting"
+            class="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50">
+            {{ commentSubmitting ? 'Publicando...' : 'Publicar comentario' }}
           </button>
         </div>
 
@@ -176,14 +177,17 @@
         <p *ngIf="commentError" class="text-sm text-red-600 mt-2">{{ commentError }}</p>
 
         <div class="mt-6 space-y-4">
+          <div *ngIf="commentsLoading" class="flex justify-center py-6">
+            <div class="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+          </div>
           <article *ngFor="let comment of comments" class="p-4 rounded-2xl border border-gray-100 bg-gray-50">
             <div class="flex items-center justify-between gap-3 mb-1">
               <p class="font-semibold text-gray-900">{{ comment.author }}</p>
-              <p class="text-xs text-gray-400">{{ comment.createdAt | date:'medium' }}</p>
+              <p class="text-xs text-gray-400">{{ comment.created_at | date:'medium' }}</p>
             </div>
             <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ comment.message }}</p>
           </article>
-          <p *ngIf="comments.length === 0" class="text-sm text-gray-500">
+          <p *ngIf="!commentsLoading && comments.length === 0" class="text-sm text-gray-500">
             Aún no hay comentarios. Sé el primero en comentar.
           </p>
         </div>

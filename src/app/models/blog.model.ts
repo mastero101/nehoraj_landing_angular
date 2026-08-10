@@ -13,3 +13,11 @@ export interface BlogPost {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface BlogComment {
+  id: string;
+  post_id: string;
+  author: string;
+  message: string;
+  created_at: string;
+}

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BlogPost } from '../models/blog.model';
+import { BlogPost, BlogComment } from '../models/blog.model';
 import { AuthResponse, User } from '../models/user.model';
 import { SocialImage } from '../models/social-image.model';
 
@@ -152,6 +152,25 @@ export class BlogService {
 
   deletePost(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/blog/${id}`, { headers: this.getHeaders() });
+  }
+
+  // ==========================================
+  // COMENTARIOS DE ARTÍCULOS
+  // ==========================================
+
+  getComments(postId: string): Observable<BlogComment[]> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return of([]);
+    }
+    return this.http.get<BlogComment[]>(`${this.apiUrl}/blog/${postId}/comments`);
+  }
+
+  addComment(postId: string, author: string, message: string): Observable<BlogComment> {
+    return this.http.post<BlogComment>(`${this.apiUrl}/blog/${postId}/comments`, { author, message });
+  }
+
+  deleteComment(commentId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/blog/comments/${commentId}`, { headers: this.getHeaders() });
   }
 
   // ==========================================

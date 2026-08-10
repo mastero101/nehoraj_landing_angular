@@ -3,14 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
 import { BlogService } from '../../services/blog.service';
-import { BlogPost } from '../../models/blog.model';
-
-interface BlogComment {
-  id: string;
-  author: string;
-  message: string;
-  createdAt: string;
-}
+import { BlogPost, BlogComment } from '../../models/blog.model';
 
 // Bloques que un redactor pudo haber escrito a mano en HTML: se respetan tal cual,
 // sin envolverlos en <p> ni tocar los saltos de línea que traigan dentro.
@@ -33,9 +26,11 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   shareLinkCopied = false;
   comments: BlogComment[] = [];
+  commentsLoading = false;
   commentAuthor = '';
   commentMessage = '';
   commentError = '';
+  commentSubmitting = false;
 
   constructor(
     private blogService: BlogService,
@@ -188,40 +183,32 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const comment: BlogComment = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      author,
-      message,
-      createdAt: new Date().toISOString()
-    };
-
-    this.comments = [comment, ...this.comments];
-    this.persistComments();
-    this.commentAuthor = '';
-    this.commentMessage = '';
-  }
-
-  private commentsStorageKey(): string {
-    return `blog_comments_${this.postId}`;
+    this.commentSubmitting = true;
+    this.blogService.addComment(this.postId, author, message).subscribe({
+      next: (comment) => {
+        this.commentSubmitting = false;
+        this.comments = [comment, ...this.comments];
+        this.commentAuthor = '';
+        this.commentMessage = '';
+      },
+      error: (err) => {
+        this.commentSubmitting = false;
+        this.commentError = err.error?.error || 'Error al publicar el comentario. Intenta de nuevo.';
+      }
+    });
   }
 
   private loadComments(): void {
-    if (typeof window === 'undefined') return;
-    const raw = localStorage.getItem(this.commentsStorageKey());
-    if (!raw) {
-      this.comments = [];
-      return;
-    }
-    try {
-      this.comments = JSON.parse(raw) as BlogComment[];
-    } catch {
-      this.comments = [];
-      localStorage.removeItem(this.commentsStorageKey());
-    }
-  }
-
-  private persistComments(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(this.commentsStorageKey(), JSON.stringify(this.comments));
+    this.commentsLoading = true;
+    this.blogService.getComments(this.postId).subscribe({
+      next: (data) => {
+        this.comments = data;
+        this.commentsLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar comentarios:', err);
+        this.commentsLoading = false;
+      }
+    });
   }
 }

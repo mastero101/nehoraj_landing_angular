@@ -60,3 +60,25 @@ CREATE POLICY "social_images_insert_public" ON social_images
 
 CREATE POLICY "social_images_delete_public" ON social_images
     FOR DELETE USING (true);
+
+-- 6. Tabla de Comentarios de Artículos del Blog
+-- Antes se guardaban en localStorage del navegador (no eran realmente
+-- persistentes: cada visitante veía solo sus propios comentarios locales).
+CREATE TABLE IF NOT EXISTS blog_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES blog_posts(id) ON DELETE CASCADE,
+    author VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE blog_comments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "blog_comments_select_public" ON blog_comments
+    FOR SELECT USING (true);
+
+CREATE POLICY "blog_comments_insert_public" ON blog_comments
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "blog_comments_delete_public" ON blog_comments
+    FOR DELETE USING (true);

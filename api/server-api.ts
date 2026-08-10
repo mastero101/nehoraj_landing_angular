@@ -577,6 +577,83 @@ router.delete('/blog/:id', authenticateToken as any, async (req: AuthenticatedRe
   }
 });
 
+// ==========================================
+// COMENTARIOS DE ARTÍCULOS DEL BLOG
+// ==========================================
+
+// Listar comentarios de un artículo (público)
+router.get('/blog/:id/comments', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const { data: comments, error } = await supabase!
+      .from('blog_comments')
+      .select('*')
+      .eq('post_id', id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return res.status(200).json(comments || []);
+  } catch (error: any) {
+    console.error('Error al listar comentarios:', error);
+    return res.status(500).json({ error: 'Error al listar los comentarios.', details: error.message });
+  }
+});
+
+// Publicar un comentario (público, cualquier visitante puede comentar)
+router.post('/blog/:id/comments', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const author = (req.body.author || '').trim();
+    const message = (req.body.message || '').trim();
+
+    if (!author || !message) {
+      return res.status(400).json({ error: 'Escribe tu nombre y comentario para publicar.' });
+    }
+    if (author.length > 100) {
+      return res.status(400).json({ error: 'El nombre es demasiado largo.' });
+    }
+    if (message.length > 2000) {
+      return res.status(400).json({ error: 'El comentario es demasiado largo (máx. 2000 caracteres).' });
+    }
+
+    const { data: newComment, error } = await supabase!
+      .from('blog_comments')
+      .insert([{ post_id: id, author, message }])
+      .select('*')
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json(newComment);
+  } catch (error: any) {
+    console.error('Error al publicar comentario:', error);
+    return res.status(500).json({ error: 'Error al publicar el comentario.', details: error.message });
+  }
+});
+
+// Eliminar un comentario (protegido, solo admin - moderación)
+router.delete('/blog/comments/:commentId', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede eliminar comentarios.' });
+    }
+
+    const { commentId } = req.params;
+    const { error } = await supabase!
+      .from('blog_comments')
+      .delete()
+      .eq('id', commentId);
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Comentario eliminado exitosamente.' });
+  } catch (error: any) {
+    console.error('Error al eliminar comentario:', error);
+    return res.status(500).json({ error: 'Error al eliminar el comentario.', details: error.message });
+  }
+});
+
 router.post('/upload', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {
     const filename = req.headers['x-filename'] as string || `file-${Date.now()}`;
