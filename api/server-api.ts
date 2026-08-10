@@ -406,6 +406,31 @@ router.get('/og-preview', async (req: Request, res: Response): Promise<any> => {
     return res.status(200).send(html);
   }
 });
+router.get('/api/og-preview', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const postId = ((req.query['post'] || req.query['id']) as string || '').trim();
+
+    if (!postId) {
+      const html = generateOgHtmlResponse(null);
+      return res.status(200).send(html);
+    }
+
+    const { data: post } = await supabase!
+      .from('blog_posts')
+      .select('*')
+      .eq('id', postId)
+      .maybeSingle();
+
+    const html = generateOgHtmlResponse(post);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(200).send(html);
+  } catch (error: any) {
+    console.error('Error en /api/og-preview:', error);
+    const html = generateOgHtmlResponse(null);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(200).send(html);
+  }
+});
 
 router.get('/blog', async (req: Request, res: Response): Promise<any> => {
   try {
