@@ -11,6 +11,11 @@ interface BlogComment {
   createdAt: string;
 }
 
+// Bloques que un redactor pudo haber escrito a mano en HTML: se respetan tal cual,
+// sin envolverlos en <p> ni tocar los saltos de línea que traigan dentro.
+const BLOCK_TAG_PATTERN =
+  /^<(p|h[1-6]|ul|ol|li|blockquote|pre|div|figure|table|img|audio|video|iframe|hr)[\s>/]/i;
+
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
@@ -60,6 +65,24 @@ export class BlogDetailComponent implements OnInit {
 
   onGoBack(): void {
     this.goBack.emit();
+  }
+
+  // Convierte el texto plano del editor en HTML legible: una línea en blanco
+  // separa párrafos, un salto simple se vuelve <br>. Los bloques que ya
+  // empiezan con una etiqueta de bloque (el redactor escribió HTML a mano)
+  // se dejan intactos.
+  get formattedContent(): string {
+    const raw = this.post?.content || '';
+    if (!raw) return '';
+
+    const normalized = raw.replace(/\r\n?/g, '\n');
+
+    return normalized
+      .split(/\n{2,}/)
+      .map(block => block.trim())
+      .filter(block => block.length > 0)
+      .map(block => BLOCK_TAG_PATTERN.test(block) ? block : `<p>${block.replace(/\n/g, '<br>')}</p>`)
+      .join('\n');
   }
 
   get encodedTitle(): string {
