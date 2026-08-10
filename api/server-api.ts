@@ -308,6 +308,105 @@ router.post('/auth/admin-reset-password', authenticateToken as any, async (req: 
   }
 });
 
+function escapeOgHtml(str: string): string {
+  return (str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function generateOgHtmlResponse(post: any): string {
+  const title = post?.title ? `${post.title} | Grupo Nehoraj` : 'Grupo Nehoraj - Transformación Digital & Innovación Tecnológica';
+  const rawExcerpt = post?.excerpt || (post?.content ? post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '');
+  const description = rawExcerpt ? (rawExcerpt.length > 160 ? `${rawExcerpt.substring(0, 157)}...` : rawExcerpt) : 'Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras.';
+  const image = post?.cover_image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80';
+  const url = post?.id ? `https://nehoraj.com/?post=${post.id}` : 'https://nehoraj.com/';
+  const siteName = 'Grupo Nehoraj';
+
+  const safeTitle = escapeOgHtml(title);
+  const safeDescription = escapeOgHtml(description);
+  const safeImage = escapeOgHtml(image);
+  const safeUrl = escapeOgHtml(url);
+
+  return `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>${safeTitle}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="${safeDescription}">
+
+  <!-- Schema.org markup for Google / LinkedIn -->
+  <meta itemprop="name" content="${safeTitle}">
+  <meta itemprop="description" content="${safeDescription}">
+  <meta itemprop="image" content="${safeImage}">
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="${siteName}">
+  <meta property="og:title" content="${safeTitle}">
+  <meta property="og:description" content="${safeDescription}">
+  <meta property="og:image" content="${safeImage}">
+  <meta property="og:image:secure_url" content="${safeImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="${safeUrl}">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${safeTitle}">
+  <meta name="twitter:description" content="${safeDescription}">
+  <meta name="twitter:image" content="${safeImage}">
+
+  <!-- Canonical link -->
+  <link rel="canonical" href="${safeUrl}">
+
+  <script>
+    // Redirección para navegadores web estándar
+    if (!/LinkedInBot|facebookexternalhit|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|Googlebot/i.test(navigator.userAgent)) {
+      window.location.href = "${safeUrl}";
+    }
+  </script>
+</head>
+<body style="font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #0f172a; padding: 40px 20px;">
+  <div style="max-width: 650px; margin: 0 auto; background: #ffffff; padding: 32px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);">
+    ${post?.cover_image ? `<img src="${safeImage}" alt="${safeTitle}" style="width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 24px;" />` : ''}
+    <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; line-height: 1.3;">${safeTitle}</h1>
+    <p style="font-size: 15px; color: #475569; line-height: 1.6; margin-bottom: 24px;">${safeDescription}</p>
+    <a href="${safeUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 8px;">Leer artículo completo en Nehoraj &rarr;</a>
+  </div>
+</body>
+</html>`;
+}
+
+router.get('/og-preview', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const postId = ((req.query['post'] || req.query['id']) as string || '').trim();
+
+    if (!postId) {
+      const html = generateOgHtmlResponse(null);
+      return res.status(200).send(html);
+    }
+
+    const { data: post } = await supabase!
+      .from('blog_posts')
+      .select('*')
+      .eq('id', postId)
+      .maybeSingle();
+
+    const html = generateOgHtmlResponse(post);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(200).send(html);
+  } catch (error: any) {
+    console.error('Error en /og-preview:', error);
+    const html = generateOgHtmlResponse(null);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(200).send(html);
+  }
+});
+
 router.get('/blog', async (req: Request, res: Response): Promise<any> => {
   try {
     const { category } = req.query;

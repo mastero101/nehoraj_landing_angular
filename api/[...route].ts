@@ -17,6 +17,19 @@ async function getApp(): Promise<express.Express> {
   app.use(express.json({ limit: '500mb' }));
   app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
+  // Interceptor para crawlers de redes sociales o la ruta ?route=og-preview
+  app.use((req, res, next) => {
+    const userAgent = req.headers['user-agent'] || '';
+    const isSocialCrawler = /LinkedInBot|facebookexternalhit|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|SkypeUriPreview|Googlebot|bingbot/i.test(userAgent);
+    const hasPostParam = Boolean(req.query['post'] || req.query['id']);
+    const isExplicitOg = req.query['route'] === 'og-preview' || req.path.includes('/og-preview');
+
+    if ((isSocialCrawler && hasPostParam) || isExplicitOg) {
+      req.url = `/og-preview?post=${encodeURIComponent((req.query['post'] || req.query['id'] || '') as string)}`;
+    }
+    next();
+  });
+
   // En Vercel el path puede llegar con o sin prefijo /api según el runtime.
   app.use('/', blogRouter);
   app.use('/api', blogRouter);

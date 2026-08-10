@@ -74,42 +74,76 @@
           </span>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-          <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">Compartir:</span>
-          <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/80 p-4 rounded-2xl border border-gray-100 mt-6">
+          <span class="text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-5.367 3 3 0 000 5.367zm0 8a3 3 0 100-5.367 3 3 0 000 5.367z"/>
+            </svg>
+            Compartir artículo:
+          </span>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Botón Destacado LinkedIn -->
+            <a 
+              [href]="linkedInShareUrl" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0A66C2] hover:bg-[#084e96] text-white text-xs font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              title="Compartir en LinkedIn">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2Z"/>
+              </svg>
+              <span>LinkedIn</span>
+            </a>
+
+            <!-- WhatsApp -->
             <a 
               [href]="whatsappShareUrl" 
               target="_blank" 
-              class="w-9 h-9 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center text-base transition-colors"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#1eb957] text-white text-xs font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
               title="Compartir por WhatsApp">
-              💬
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-1.151 4.204 4.381-1.148z"/>
+              </svg>
+              <span>WhatsApp</span>
             </a>
-            <a
-              [href]="xShareUrl"
-              target="_blank"
-              class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center text-base transition-colors"
+
+            <!-- X (Twitter) -->
+            <a 
+              [href]="xShareUrl" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-black hover:bg-gray-800 text-white text-xs font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
               title="Compartir en X">
-              𝕏
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              <span>X</span>
             </a>
-            <a
-              [href]="facebookShareUrl"
-              target="_blank"
-              class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 flex items-center justify-center text-base transition-colors"
+
+            <!-- Facebook -->
+            <a 
+              [href]="facebookShareUrl" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1877F2] hover:bg-[#0c63d4] text-white text-xs font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
               title="Compartir en Facebook">
-              f
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span>Facebook</span>
             </a>
-            <a
-              [href]="linkedInShareUrl"
-              target="_blank"
-              class="w-9 h-9 rounded-full bg-cyan-100 text-cyan-700 hover:bg-cyan-200 flex items-center justify-center text-base transition-colors"
-              title="Compartir en LinkedIn">
-              in
-            </a>
+
+            <!-- Copiar Enlace -->
             <button
               type="button"
               (click)="copyArticleLink()"
-              class="px-4 h-9 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold transition-colors whitespace-nowrap">
-              {{ shareLinkCopied ? '✅ Copiado' : '📋 Copiar enlace' }}
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 text-xs font-bold transition-all shadow-sm hover:shadow-md whitespace-nowrap"
+              title="Copiar enlace del artículo">
+              <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+              </svg>
+              <span>{{ shareLinkCopied ? '¡Enlace Copiado!' : 'Copiar enlace' }}</span>
             </button>
           </div>
         </div>

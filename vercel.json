@@ -1,6 +1,21 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "post"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(LinkedInBot|facebookexternalhit|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|SkypeUriPreview|Googlebot|bingbot).*"
+        }
+      ],
+      "destination": "/api/[...route]?route=og-preview"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/[...route]"
     }
