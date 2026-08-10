@@ -574,6 +574,30 @@ router.post('/social-images', authenticateToken as any, async (req: Authenticate
   }
 });
 
+// Renombrar/editar una campaña completa (protegido) - actualiza todas las filas que compartan el título actual
+router.put('/social-images/campaign', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { old_title, new_title, new_description } = req.body;
+
+    if (!old_title || !new_title) {
+      return res.status(400).json({ error: 'El título actual y el nuevo título son obligatorios.' });
+    }
+
+    const { data: updated, error } = await supabase!
+      .from('social_images')
+      .update({ campaign_title: new_title, campaign_description: new_description || '' })
+      .eq('campaign_title', old_title)
+      .select('id');
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Campaña actualizada exitosamente.', updated: updated?.length || 0 });
+  } catch (error: any) {
+    console.error('Error al actualizar campaña de responsabilidad social:', error);
+    return res.status(500).json({ error: 'Error al actualizar la campaña.', details: error.message });
+  }
+});
+
 // Eliminar una imagen (protegido) - borra la fila y el archivo en Vercel Blob
 router.delete('/social-images/:id', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {

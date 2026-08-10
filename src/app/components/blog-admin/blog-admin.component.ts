@@ -81,6 +81,11 @@ export class BlogAdminComponent implements OnInit {
   newSocialCampaignDescription = '';
   uploadingSocialImage = false;
   socialUploadProgress = 0;
+  editingCampaignTitle: string | null = null;
+  editCampaignNewTitle = '';
+  editCampaignNewDescription = '';
+  editCampaignLoading = false;
+  editCampaignError = '';
 
   constructor(
     public blogService: BlogService,
@@ -753,6 +758,44 @@ IMPORTANTE: Debes responder ÚNICAMENTE en formato JSON plano (sin bloques de c�
     this.blogService.deleteSocialImage(image.id).subscribe({
       next: () => this.loadSocialImages(),
       error: (err) => alert('Error al eliminar la foto: ' + (err.error?.error || err.message))
+    });
+  }
+
+  openEditCampaign(grupo: { title: string; description: string }): void {
+    this.editingCampaignTitle = grupo.title;
+    this.editCampaignNewTitle = grupo.title;
+    this.editCampaignNewDescription = grupo.description;
+    this.editCampaignError = '';
+  }
+
+  cancelEditCampaign(): void {
+    this.editingCampaignTitle = null;
+    this.editCampaignError = '';
+  }
+
+  onSaveCampaign(event?: Event): void {
+    event?.preventDefault();
+    if (!this.editingCampaignTitle) return;
+
+    const newTitle = this.editCampaignNewTitle.trim();
+    if (!newTitle) {
+      this.editCampaignError = 'El nombre de la campaña no puede estar vacío.';
+      return;
+    }
+
+    this.editCampaignLoading = true;
+    this.editCampaignError = '';
+
+    this.blogService.updateSocialCampaign(this.editingCampaignTitle, newTitle, this.editCampaignNewDescription.trim()).subscribe({
+      next: () => {
+        this.editCampaignLoading = false;
+        this.editingCampaignTitle = null;
+        this.loadSocialImages();
+      },
+      error: (err) => {
+        this.editCampaignLoading = false;
+        this.editCampaignError = err.error?.error || 'Error al actualizar la campaña.';
+      }
     });
   }
 

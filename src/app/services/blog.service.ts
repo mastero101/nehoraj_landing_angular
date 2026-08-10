@@ -205,4 +205,12 @@ export class BlogService {
   deleteSocialImage(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/social-images/${id}`, { headers: this.getHeaders() });
   }
+
+  updateSocialCampaign(oldTitle: string, newTitle: string, newDescription: string): Observable<any> {
+    return this.http.put<any>(
+      `${this.apiUrl}/social-images/campaign`,
+      { old_title: oldTitle, new_title: newTitle, new_description: newDescription },
+      { headers: this.getHeaders() }
+    );
+  }
 }
