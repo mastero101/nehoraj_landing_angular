@@ -5,6 +5,7 @@ import { BlogService } from '../../services/blog.service';
 import { OpenaiService } from '../../services/openai.service';
 import { BlogPost } from '../../models/blog.model';
 import { User } from '../../models/user.model';
+import { SocialImage } from '../../models/social-image.model';
 
 @Component({
   selector: 'app-blog-admin',
@@ -17,8 +18,8 @@ export class BlogAdminComponent implements OnInit {
   @Output() closeAdmin = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
 
-  // Estados de vista: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users'
-  viewState: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' = 'login';
+  // Estados de vista: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media'
+  viewState: 'login' | 'register' | 'dashboard' | 'editor' | 'change-password' | 'admin-users' | 'social-media' = 'login';
 
   // Formulario Auth
   username = '';
@@ -71,6 +72,15 @@ export class BlogAdminComponent implements OnInit {
   // Lista de Posts para gestión
   postsList: BlogPost[] = [];
   listLoading = false;
+
+  // Imágenes de Responsabilidad Social
+  socialImages: SocialImage[] = [];
+  socialImagesLoading = false;
+  socialImagesError = '';
+  newSocialCampaignTitle = '';
+  newSocialCampaignDescription = '';
+  uploadingSocialImage = false;
+  socialUploadProgress = 0;
 
   constructor(
     public blogService: BlogService,
@@ -634,6 +644,116 @@ IMPORTANTE: Debes responder ÚNICAMENTE en formato JSON plano (sin bloques de c�
       return 'Subiendo... ' + this.uploadProgress + '%';
     }
     return '📁 Seleccionar Imagen / Audio / Video';
+  }
+
+  // ==========================================
+  // IMÁGENES DE RESPONSABILIDAD SOCIAL
+  // ==========================================
+
+  openSocialMedia(): void {
+    this.socialImagesError = '';
+    this.newSocialCampaignTitle = '';
+    this.newSocialCampaignDescription = '';
+    this.viewState = 'social-media';
+    this.loadSocialImages();
+  }
+
+  loadSocialImages(): void {
+    this.socialImagesLoading = true;
+    this.socialImagesError = '';
+    this.blogService.getSocialImages().subscribe({
+      next: (data) => {
+        this.socialImages = data;
+        this.socialImagesLoading = false;
+      },
+      error: (err) => {
+        this.socialImagesLoading = false;
+        this.socialImagesError = err.error?.error || 'Error al cargar las imágenes.';
+      }
+    });
+  }
+
+  get socialCampaignTitles(): string[] {
+    return Array.from(new Set(this.socialImages.map(img => img.campaign_title)));
+  }
+
+  get groupedSocialImages(): { title: string; description: string; images: SocialImage[] }[] {
+    const groups = new Map<string, SocialImage[]>();
+    for (const img of this.socialImages) {
+      const list = groups.get(img.campaign_title) || [];
+      list.push(img);
+      groups.set(img.campaign_title, list);
+    }
+    return Array.from(groups.entries()).map(([title, images]) => ({
+      title,
+      description: images[0]?.campaign_description || '',
+      images: images.slice().sort((a, b) => a.sort_order - b.sort_order)
+    }));
+  }
+
+  onSocialImageFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    const title = this.newSocialCampaignTitle.trim();
+
+    if (!file) return;
+    if (!title) {
+      alert('Escribe el nombre de la campaña antes de subir una foto.');
+      event.target.value = '';
+      return;
+    }
+
+    this.uploadingSocialImage = true;
+    this.socialUploadProgress = 0;
+
+    this.blogService.uploadFile(file).subscribe({
+      next: (res: any) => {
+        if ('progress' in res) {
+          this.socialUploadProgress = res.progress;
+          return;
+        }
+        if (!('url' in res)) return;
+
+        const existingInCampaign = this.socialImages.filter(img => img.campaign_title === title);
+        const overallMaxOrder = this.socialImages.length
+          ? Math.max(...this.socialImages.map(img => img.sort_order))
+          : -1;
+        const sortOrder = existingInCampaign.length
+          ? Math.max(...existingInCampaign.map(img => img.sort_order)) + 1
+          : overallMaxOrder + 1;
+
+        this.blogService.createSocialImage({
+          campaign_title: title,
+          campaign_description: this.newSocialCampaignDescription.trim(),
+          image_url: res.url,
+          sort_order: sortOrder
+        }).subscribe({
+          next: () => {
+            this.uploadingSocialImage = false;
+            this.socialUploadProgress = 0;
+            this.loadSocialImages();
+          },
+          error: (err) => {
+            this.uploadingSocialImage = false;
+            alert('Error al registrar la foto: ' + (err.error?.error || err.message));
+          }
+        });
+      },
+      error: (err) => {
+        this.uploadingSocialImage = false;
+        this.socialUploadProgress = 0;
+        alert('Error al subir la foto: ' + (err.error?.error || err.message));
+      }
+    });
+
+    event.target.value = '';
+  }
+
+  onDeleteSocialImage(image: SocialImage): void {
+    if (!confirm('¿Eliminar esta foto de forma permanente?')) return;
+    this.blogService.deleteSocialImage(image.id).subscribe({
+      next: () => this.loadSocialImages(),
+      error: (err) => alert('Error al eliminar la foto: ' + (err.error?.error || err.message))
+    });
   }
 
   // ==========================================

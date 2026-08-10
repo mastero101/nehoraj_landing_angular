@@ -37,3 +37,26 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 INSERT INTO blog_users (username, password_hash, role)
 VALUES ('admin', '$2a$10$Qj2z5N8h2yVzJ5fHh2x3OeC6RkQp/Q2f7hJ7y9w2n2m2k2g2h2h2h-12aa42', 'admin')
 ON CONFLICT (username) DO NOTHING;
+
+-- 5. Tabla de Imágenes de Responsabilidad Social Empresarial
+CREATE TABLE IF NOT EXISTS social_images (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    campaign_title VARCHAR(255) NOT NULL,
+    campaign_description TEXT,
+    image_url TEXT NOT NULL,
+    sort_order INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- RLS: lectura pública, escritura/borrado gestionados por la app vía JWT propio
+-- (mismo criterio que blog_posts: la autorización real la hace authenticateToken en el backend)
+ALTER TABLE social_images ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "social_images_select_public" ON social_images
+    FOR SELECT USING (true);
+
+CREATE POLICY "social_images_insert_public" ON social_images
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "social_images_delete_public" ON social_images
+    FOR DELETE USING (true);

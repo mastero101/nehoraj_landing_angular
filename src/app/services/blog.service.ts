@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BlogPost } from '../models/blog.model';
 import { AuthResponse, User } from '../models/user.model';
+import { SocialImage } from '../models/social-image.model';
 
 @Injectable({
   providedIn: 'root'
@@ -184,5 +185,24 @@ export class BlogService {
         }
       });
     });
+  }
+
+  // ==========================================
+  // IMÁGENES DE RESPONSABILIDAD SOCIAL
+  // ==========================================
+
+  getSocialImages(): Observable<SocialImage[]> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return of([]);
+    }
+    return this.http.get<SocialImage[]>(`${this.apiUrl}/social-images`);
+  }
+
+  createSocialImage(image: Partial<SocialImage>): Observable<SocialImage> {
+    return this.http.post<SocialImage>(`${this.apiUrl}/social-images`, image, { headers: this.getHeaders() });
+  }
+
+  deleteSocialImage(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/social-images/${id}`, { headers: this.getHeaders() });
   }
 }

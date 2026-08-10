@@ -21,6 +21,12 @@
         👥 Gestionar Redactores
       </button>
       <button
+        *ngIf="isAdmin && viewState !== 'social-media'"
+        (click)="openSocialMedia()"
+        class="text-xs font-bold text-gray-500 hover:text-blue-600 uppercase tracking-wider">
+        🌳 Responsabilidad Social
+      </button>
+      <button
         (click)="onLogout()"
         class="text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider">
         🚪 Cerrar Sesión
@@ -738,6 +744,83 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 7. RESPONSABILIDAD SOCIAL (GESTIÓN DE IMÁGENES) -->
+  <!-- ========================================== -->
+  <div *ngIf="viewState === 'social-media'" class="bg-white rounded-3xl shadow-xl border border-blue-50/50 p-6 md:p-8">
+    <div class="mb-8">
+      <h3 class="text-2xl font-bold text-gray-900">Responsabilidad Social</h3>
+      <p class="text-gray-500 text-sm mt-0.5">Sube o elimina las fotos de las campañas que se muestran en la sección de Responsabilidad Social del sitio público.</p>
+    </div>
+
+    <!-- Formulario de subida -->
+    <div class="bg-gray-50/70 border border-gray-200/80 rounded-2xl p-5 mb-8">
+      <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Subir nueva foto</h4>
+      <div class="grid gap-4 md:grid-cols-2 mb-4">
+        <div>
+          <label for="social_campaign_title" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Nombre de la Campaña</label>
+          <input
+            type="text"
+            id="social_campaign_title"
+            name="social_campaign_title"
+            [(ngModel)]="newSocialCampaignTitle"
+            list="social_campaign_titles"
+            placeholder="Ej: Siembra de Árboles Carmen"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          <datalist id="social_campaign_titles">
+            <option *ngFor="let title of socialCampaignTitles" [value]="title"></option>
+          </datalist>
+          <p class="text-[11px] text-gray-400 mt-1">Si el nombre coincide con una campaña existente, la foto se agrega a esa galería.</p>
+        </div>
+        <div>
+          <label for="social_campaign_description" class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Descripción de la Campaña</label>
+          <input
+            type="text"
+            id="social_campaign_description"
+            name="social_campaign_description"
+            [(ngModel)]="newSocialCampaignDescription"
+            placeholder="Breve descripción de la campaña"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+        </div>
+      </div>
+
+      <label
+        class="flex items-center justify-center gap-2 px-6 h-12 rounded-xl border-2 border-dashed border-blue-300 text-blue-600 text-sm font-bold hover:bg-blue-50 transition-colors cursor-pointer"
+        [class.opacity-50]="uploadingSocialImage">
+        <span>{{ uploadingSocialImage ? 'Subiendo... ' + socialUploadProgress + '%' : '📁 Seleccionar Foto' }}</span>
+        <input type="file" accept="image/*" class="hidden" [disabled]="uploadingSocialImage" (change)="onSocialImageFileSelected($event)">
+      </label>
+    </div>
+
+    <div *ngIf="socialImagesError" class="mb-6 p-3.5 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl">
+      {{ socialImagesError }}
+    </div>
+
+    <div *ngIf="socialImagesLoading" class="flex justify-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+    </div>
+
+    <div *ngIf="!socialImagesLoading && groupedSocialImages.length === 0 && !socialImagesError" class="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+      <p class="text-gray-500 font-medium">Aún no hay fotos gestionadas desde aquí.</p>
+    </div>
+
+    <div *ngFor="let grupo of groupedSocialImages" class="mb-8">
+      <h4 class="text-lg font-bold text-gray-900 mb-1">{{ grupo.title }}</h4>
+      <p *ngIf="grupo.description" class="text-sm text-gray-500 mb-3">{{ grupo.description }}</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div *ngFor="let img of grupo.images" class="relative rounded-xl overflow-hidden border border-gray-200 group aspect-square bg-gray-100">
+          <img [src]="img.image_url" alt="{{ grupo.title }}" class="w-full h-full object-cover">
+          <button
+            (click)="onDeleteSocialImage(img)"
+            title="Eliminar foto"
+            class="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-600/90 text-white text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg">
+            🗑️
+          </button>
+        </div>
       </div>
     </div>
   </div>

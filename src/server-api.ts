@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { put } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import axios from 'axios';
@@ -521,6 +521,89 @@ router.post('/upload', authenticateToken as any, async (req: AuthenticatedReques
   } catch (error: any) {
     console.error('Error al subir archivo a Vercel Blob:', error);
     return res.status(500).json({ error: 'Error al subir el archivo multimedia.', details: error.message });
+  }
+});
+
+// ==========================================
+// ENDPOINTS DE IMÁGENES DE RESPONSABILIDAD SOCIAL
+// ==========================================
+
+// Obtener todas las imágenes, agrupadas por campaña en el cliente (público)
+router.get('/social-images', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { data: images, error } = await supabase!
+      .from('social_images')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+
+    return res.status(200).json(images || []);
+  } catch (error: any) {
+    console.error('Error al listar imágenes de responsabilidad social:', error);
+    return res.status(500).json({ error: 'Error al listar las imágenes.', details: error.message });
+  }
+});
+
+// Registrar una imagen ya subida a Vercel Blob (protegido)
+router.post('/social-images', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { campaign_title, campaign_description, image_url, sort_order } = req.body;
+
+    if (!campaign_title || !image_url) {
+      return res.status(400).json({ error: 'El título de la campaña y la URL de la imagen son obligatorios.' });
+    }
+
+    const { data: newImage, error } = await supabase!
+      .from('social_images')
+      .insert([{
+        campaign_title,
+        campaign_description: campaign_description || '',
+        image_url,
+        sort_order: typeof sort_order === 'number' ? sort_order : 0
+      }])
+      .select('*')
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json(newImage);
+  } catch (error: any) {
+    console.error('Error al registrar imagen de responsabilidad social:', error);
+    return res.status(500).json({ error: 'Error al registrar la imagen.', details: error.message });
+  }
+});
+
+// Eliminar una imagen (protegido) - borra la fila y el archivo en Vercel Blob
+router.delete('/social-images/:id', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+
+    const { data: image } = await supabase!
+      .from('social_images')
+      .select('image_url')
+      .eq('id', id)
+      .single();
+
+    const { error } = await supabase!
+      .from('social_images')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    if (image?.image_url) {
+      try {
+        await del(image.image_url);
+      } catch (blobError) {
+        console.error('No se pudo eliminar el archivo en Vercel Blob:', blobError);
+      }
+    }
+
+    return res.status(200).json({ message: 'Imagen eliminada exitosamente.' });
+  } catch (error: any) {
+    console.error('Error al eliminar imagen de responsabilidad social:', error);
+    return res.status(500).json({ error: 'Error al eliminar la imagen.', details: error.message });
   }
 });
 
