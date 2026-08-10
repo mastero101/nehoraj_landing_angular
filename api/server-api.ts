@@ -205,7 +205,8 @@ router.post('/auth/login', async (req: Request, res: Response): Promise<any> => 
       user: {
         id: user.id,
         username: user.username,
-        role: user.role
+        role: user.role,
+        avatar_url: user.avatar_url || ''
       }
     });
   } catch (error: any) {
@@ -267,7 +268,7 @@ router.get('/auth/users', authenticateToken as any, async (req: AuthenticatedReq
 
     const { data: users, error } = await supabase!
       .from('blog_users')
-      .select('id, username, role, created_at')
+      .select('id, username, role, avatar_url, created_at')
       .order('created_at', { ascending: true });
 
     if (error) throw error;
@@ -314,6 +315,94 @@ router.post('/auth/admin-reset-password', authenticateToken as any, async (req: 
   } catch (error: any) {
     console.error('Error al resetear la contraseña:', error);
     return res.status(500).json({ error: 'Error del servidor al resetear la contraseña.', details: error.message });
+  }
+});
+
+// Actualizar la foto de perfil propia (cualquier redactor autenticado)
+router.put('/auth/me/avatar', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { avatar_url } = req.body;
+
+    if (!avatar_url) {
+      return res.status(400).json({ error: 'La URL de la imagen es obligatoria.' });
+    }
+
+    const { data: updatedUser, error } = await supabase!
+      .from('blog_users')
+      .update({ avatar_url })
+      .eq('id', req.user!.userId)
+      .select('id, username, role, avatar_url')
+      .single();
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Foto de perfil actualizada exitosamente.', user: updatedUser });
+  } catch (error: any) {
+    console.error('Error al actualizar la foto de perfil:', error);
+    return res.status(500).json({ error: 'Error al actualizar la foto de perfil.', details: error.message });
+  }
+});
+
+// Cambiar el rol de un redactor (solo admin, no puede cambiarse su propio rol)
+router.put('/auth/users/:id/role', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede cambiar roles.' });
+    }
+
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (id === req.user.userId) {
+      return res.status(400).json({ error: 'No puedes cambiar tu propio rol. Pide a otro administrador que lo haga.' });
+    }
+    if (role !== 'author' && role !== 'admin') {
+      return res.status(400).json({ error: 'Rol inválido.' });
+    }
+
+    const { data: updatedUser, error } = await supabase!
+      .from('blog_users')
+      .update({ role })
+      .eq('id', id)
+      .select('id, username, role')
+      .single();
+
+    if (error) throw error;
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    return res.status(200).json({ message: 'Rol actualizado exitosamente.', user: updatedUser });
+  } catch (error: any) {
+    console.error('Error al cambiar el rol:', error);
+    return res.status(500).json({ error: 'Error al cambiar el rol.', details: error.message });
+  }
+});
+
+// Eliminar un redactor (solo admin, no puede eliminarse a sí mismo)
+router.delete('/auth/users/:id', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede eliminar redactores.' });
+    }
+
+    const { id } = req.params;
+
+    if (id === req.user.userId) {
+      return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta desde aquí.' });
+    }
+
+    const { error } = await supabase!
+      .from('blog_users')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return res.status(200).json({ message: 'Redactor eliminado exitosamente.' });
+  } catch (error: any) {
+    console.error('Error al eliminar redactor:', error);
+    return res.status(500).json({ error: 'Error al eliminar el redactor.', details: error.message });
   }
 });
 

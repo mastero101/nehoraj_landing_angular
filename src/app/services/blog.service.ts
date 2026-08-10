@@ -103,6 +103,38 @@ export class BlogService {
     );
   }
 
+  updateMyAvatar(avatarUrl: string): Observable<any> {
+    return this.http.put<any>(
+      `${this.apiUrl}/auth/me/avatar`,
+      { avatar_url: avatarUrl },
+      { headers: this.getHeaders() }
+    ).pipe(
+      map(response => {
+        const current = this.currentUserSubject.value;
+        if (current) {
+          const updatedUser = { ...current, avatar_url: avatarUrl };
+          this.currentUserSubject.next(updatedUser);
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('blog_user', JSON.stringify(updatedUser));
+          }
+        }
+        return response;
+      })
+    );
+  }
+
+  updateUserRole(userId: string, role: string): Observable<any> {
+    return this.http.put<any>(
+      `${this.apiUrl}/auth/users/${userId}/role`,
+      { role },
+      { headers: this.getHeaders() }
+    );
+  }
+
+  deleteUser(userId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/auth/users/${userId}`, { headers: this.getHeaders() });
+  }
+
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       return !!localStorage.getItem('blog_token');

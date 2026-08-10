@@ -56,6 +56,13 @@ export class BlogAdminComponent implements OnInit {
   createRedactorSuccess = '';
   createRedactorLoading = false;
 
+  // Foto de perfil propia (avatar de autor)
+  showMyAvatarModal = false;
+  uploadingMyAvatar = false;
+  myAvatarUploadProgress = 0;
+  myAvatarError = '';
+  myAvatarSuccess = '';
+
   // Formulario Artículos & Redacción Avanzada
   @ViewChild('contentTextArea') contentTextArea!: ElementRef<HTMLTextAreaElement>;
   editorTab: 'edit' | 'preview' = 'edit';
@@ -306,6 +313,89 @@ export class BlogAdminComponent implements OnInit {
     });
   }
 
+  isCurrentUser(user: User): boolean {
+    return user.id === this.blogService.currentUserValue?.id;
+  }
+
+  onChangeUserRole(user: User, newRole: string): void {
+    const previousRole = user.role;
+    if (!confirm(`¿Cambiar el rol de "${user.username}" de "${previousRole}" a "${newRole}"?`)) {
+      return;
+    }
+
+    this.blogService.updateUserRole(user.id, newRole).subscribe({
+      next: () => {
+        user.role = newRole;
+      },
+      error: (err) => {
+        alert('Error al cambiar el rol: ' + (err.error?.error || err.message));
+        this.loadUsers();
+      }
+    });
+  }
+
+  onDeleteRedactor(user: User): void {
+    if (!confirm(`¿Eliminar permanentemente al redactor "${user.username}"? Sus artículos publicados no se eliminarán.`)) {
+      return;
+    }
+
+    this.blogService.deleteUser(user.id).subscribe({
+      next: () => this.loadUsers(),
+      error: (err) => alert('Error al eliminar el redactor: ' + (err.error?.error || err.message))
+    });
+  }
+
+  // ==========================================
+  // FOTO DE PERFIL PROPIA (AVATAR DE AUTOR)
+  // ==========================================
+
+  openMyAvatarModal(): void {
+    this.myAvatarError = '';
+    this.myAvatarSuccess = '';
+    this.showMyAvatarModal = true;
+  }
+
+  closeMyAvatarModal(): void {
+    this.showMyAvatarModal = false;
+  }
+
+  onMyAvatarFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    this.myAvatarError = '';
+    this.myAvatarSuccess = '';
+    this.uploadingMyAvatar = true;
+    this.myAvatarUploadProgress = 0;
+
+    this.blogService.uploadFile(file).subscribe({
+      next: (res: any) => {
+        if ('progress' in res) {
+          this.myAvatarUploadProgress = res.progress;
+          return;
+        }
+        if (!('url' in res)) return;
+
+        this.blogService.updateMyAvatar(res.url).subscribe({
+          next: () => {
+            this.uploadingMyAvatar = false;
+            this.myAvatarSuccess = 'Foto de perfil actualizada. Se usará en tus próximos artículos.';
+          },
+          error: (err) => {
+            this.uploadingMyAvatar = false;
+            this.myAvatarError = err.error?.error || 'Error al guardar la foto de perfil.';
+          }
+        });
+      },
+      error: (err) => {
+        this.uploadingMyAvatar = false;
+        this.myAvatarError = err.error?.error || 'Error al subir la foto.';
+      }
+    });
+
+    event.target.value = '';
+  }
+
   // ==========================================
   // CARGA DE ARTÍCULOS EN DASHBOARD
   // ==========================================
@@ -330,6 +420,7 @@ export class BlogAdminComponent implements OnInit {
 
   openCreateForm(): void {
     this.editingPost = this.getEmptyPost();
+    this.editingPost.author_avatar = this.blogService.currentUserValue?.avatar_url || '';
     this.tagsInput = '';
     this.editorTab = 'edit';
     this.updateStats();

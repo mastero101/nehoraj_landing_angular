@@ -15,6 +15,11 @@
         🔒 Cambiar Contraseña
       </button>
       <button
+        (click)="openMyAvatarModal()"
+        class="text-xs font-bold text-gray-500 hover:text-blue-600 uppercase tracking-wider">
+        🖼️ Mi Foto de Perfil
+      </button>
+      <button
         *ngIf="isAdmin && viewState !== 'admin-users'"
         (click)="openAdminUsers()"
         class="text-xs font-bold text-gray-500 hover:text-blue-600 uppercase tracking-wider">
@@ -635,15 +640,41 @@
         </thead>
         <tbody class="divide-y divide-gray-100">
           <tr *ngFor="let user of usersList" class="hover:bg-blue-50/20 transition-colors">
-            <td class="px-6 py-4 font-bold text-gray-900">{{ user.username }}</td>
-            <td class="px-6 py-4">
-              <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase">{{ user.role }}</span>
+            <td class="px-6 py-4 font-bold text-gray-900 flex items-center gap-2.5">
+              <img
+                [src]="user.avatar_url || 'assets/img/cofounder-1.png'"
+                alt="{{ user.username }}"
+                class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm">
+              {{ user.username }}
+              <span *ngIf="isCurrentUser(user)" class="text-[10px] text-gray-400 font-normal normal-case">(tú)</span>
             </td>
-            <td class="px-6 py-4 text-right">
+            <td class="px-6 py-4">
+              <span
+                *ngIf="isCurrentUser(user)"
+                class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase">
+                {{ user.role }}
+              </span>
+              <select
+                *ngIf="!isCurrentUser(user)"
+                [ngModel]="user.role"
+                (ngModelChange)="onChangeUserRole(user, $event)"
+                name="role_{{ user.id }}"
+                class="text-xs font-bold border border-gray-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="author">author</option>
+                <option value="admin">admin</option>
+              </select>
+            </td>
+            <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
               <button
                 (click)="openResetFor(user)"
                 class="px-3 py-1.5 rounded-lg border border-blue-200 text-blue-600 text-xs font-bold hover:bg-blue-50 transition-colors">
                 🔑 Resetear Contraseña
+              </button>
+              <button
+                *ngIf="!isCurrentUser(user)"
+                (click)="onDeleteRedactor(user)"
+                class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-bold hover:bg-red-50 transition-colors">
+                🗑️ Eliminar
               </button>
             </td>
           </tr>
@@ -957,6 +988,45 @@
           class="px-6 h-11 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex items-center gap-2">
           <span *ngIf="aiLoading" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
           <span>{{ aiLoading ? 'Generando con IA...' : '✨ Generar Ahora' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: MI FOTO DE PERFIL -->
+  <!-- ========================================== -->
+  <div *ngIf="showMyAvatarModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+      <h4 class="text-lg font-bold text-gray-900 mb-1">Mi foto de perfil</h4>
+      <p class="text-sm text-gray-500 mb-4">Esta foto se usará automáticamente como tu avatar de autor en los artículos que publiques.</p>
+
+      <div *ngIf="myAvatarError" class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded-r-xl">
+        {{ myAvatarError }}
+      </div>
+      <div *ngIf="myAvatarSuccess" class="mb-4 p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-xs rounded-r-xl">
+        {{ myAvatarSuccess }}
+      </div>
+
+      <div class="flex items-center gap-4 mb-5">
+        <img
+          [src]="blogService.currentUserValue?.avatar_url || 'assets/img/cofounder-1.png'"
+          alt="Foto de perfil actual"
+          class="w-16 h-16 rounded-full object-cover ring-4 ring-blue-50">
+        <label
+          class="flex-1 flex items-center justify-center gap-2 px-4 h-11 rounded-xl border-2 border-dashed border-blue-300 text-blue-600 text-xs font-bold hover:bg-blue-50 transition-colors cursor-pointer"
+          [class.opacity-50]="uploadingMyAvatar">
+          <span>{{ uploadingMyAvatar ? 'Subiendo... ' + myAvatarUploadProgress + '%' : '📁 Cambiar foto' }}</span>
+          <input type="file" accept="image/*" class="hidden" [disabled]="uploadingMyAvatar" (change)="onMyAvatarFileSelected($event)">
+        </label>
+      </div>
+
+      <div class="flex items-center justify-end gap-3">
+        <button
+          type="button"
+          (click)="closeMyAvatarModal()"
+          class="px-5 h-11 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition-colors">
+          Cerrar
         </button>
       </div>
     </div>

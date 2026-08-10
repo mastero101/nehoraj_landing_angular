@@ -11,8 +11,12 @@ CREATE TABLE IF NOT EXISTS blog_users (
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'author',
+    avatar_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Si la tabla ya existía antes de agregar avatar_url, migrar con:
+-- ALTER TABLE blog_users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 
 -- 3. Tabla de Artículos del Blog
 CREATE TABLE IF NOT EXISTS blog_posts (
