@@ -27,13 +27,14 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets"
             ],
             "styles": [
               "src/styles.scss"
             ],
             "scripts": [
-              
+
             ],
             "server": "src/main.server.ts",
             "prerender": true,
@@ -114,6 +115,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets"
             ],
             "styles": [
