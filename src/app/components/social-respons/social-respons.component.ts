@@ -12,25 +12,11 @@ import { BlogService } from '../../services/blog.service';
   styleUrl: './social-respons.component.scss'
 })
 export class SocialResponsComponent implements OnInit {
-  // Campaña histórica, mantenida tal cual mientras las nuevas campañas
-  // se gestionan desde el panel de administración (tabla social_images).
-  private readonly campaniaEstatica = {
-    id: 1000,
-    titulo: 'Campaña de Siembra de Árboles Carmen, Campeche',
-    descripcion: 'Fomentamos la plantación de árboles para mejorar el medio ambiente y la calidad de vida en Carmen, Campeche.',
-    imagenes: [
-      '../../../assets/social/sembrando_arboles.jpg',
-      '../../../assets/social/sembrando_arboles2.jpg',
-    ]
-  };
+  // Todas las campañas se gestionan desde el panel de administración
+  // (tabla social_images), incluida la histórica de Siembra de Árboles.
+  campanias: { id: number; titulo: string; descripcion: string; imagenes: string[] }[] = [];
 
-  campaniasDinamicas: { id: number; titulo: string; descripcion: string; imagenes: string[] }[] = [];
-
-  get campanias() {
-    return [...this.campaniasDinamicas, this.campaniaEstatica];
-  }
-
-  currentIndex: { [key: number]: number } = { [this.campaniaEstatica.id]: 0 };
+  currentIndex: { [key: number]: number } = {};
 
   constructor(private blogService: BlogService) {}
 
@@ -44,14 +30,14 @@ export class SocialResponsComponent implements OnInit {
           groups.set(img.campaign_title, group);
         }
 
-        this.campaniasDinamicas = Array.from(groups.entries()).map(([titulo, data], index) => ({
+        this.campanias = Array.from(groups.entries()).map(([titulo, data], index) => ({
           id: index + 1,
           titulo,
           descripcion: data.descripcion,
           imagenes: data.imagenes
         }));
 
-        this.campaniasDinamicas.forEach(c => this.currentIndex[c.id] = 0);
+        this.campanias.forEach(c => this.currentIndex[c.id] = 0);
       },
       error: (err) => console.error('Error al cargar imágenes de responsabilidad social:', err)
     });
