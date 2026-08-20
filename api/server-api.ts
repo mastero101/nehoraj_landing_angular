@@ -471,7 +471,17 @@ function escapeOgHtml(str: string): string {
 function generateOgHtmlResponse(post: any): string {
   const title = post?.title ? `${post.title} | Grupo Nehoraj` : 'Grupo Nehoraj - Transformación Digital & Innovación Tecnológica';
   const rawExcerpt = post?.excerpt || (post?.content ? post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '');
-  const description = rawExcerpt ? (rawExcerpt.length > 160 ? `${rawExcerpt.substring(0, 157)}...` : rawExcerpt) : 'Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras.';
+  const baseDescription = rawExcerpt || 'Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras.';
+  // WhatsApp/Facebook/Twitter no tienen un campo aparte para el autor en su
+  // tarjeta de previsualización: solo pintan imagen, título y descripción. Por
+  // eso el nombre del autor va antepuesto a la descripción, que es lo único
+  // que el usuario ve además del título al compartir el enlace del artículo.
+  const authorPrefix = post?.author_name ? `Por ${post.author_name} — ` : '';
+  const maxExcerptLength = 160 - authorPrefix.length;
+  const truncatedExcerpt = baseDescription.length > maxExcerptLength
+    ? `${baseDescription.substring(0, maxExcerptLength - 3)}...`
+    : baseDescription;
+  const description = post?.author_name ? `${authorPrefix}${truncatedExcerpt}` : truncatedExcerpt;
   const image = post?.cover_image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80';
   const url = post?.id ? `https://nehoraj.com/?post=${post.id}` : 'https://nehoraj.com/';
   const siteName = 'Grupo Nehoraj';
