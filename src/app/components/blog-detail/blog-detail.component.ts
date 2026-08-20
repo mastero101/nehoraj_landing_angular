@@ -70,7 +70,8 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
 
   private updateMetaTags(post: BlogPost): void {
     const pageTitle = `${post.title} | Grupo Nehoraj`;
-    const excerptText = post.excerpt || this.extractCleanSnippet(post.content);
+    const rawExcerpt = post.excerpt || this.extractCleanSnippet(post.content);
+    const excerptText = this.buildShareDescription(post, rawExcerpt);
     const currentUrl = this.shareUrl || (typeof window !== 'undefined' ? window.location.href : `https://nehoraj.com/?post=${post.id}`);
     const coverImage = post.cover_image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80';
 
@@ -107,6 +108,26 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.metaService.updateTag({ name: 'twitter:title', content: 'Grupo Nehoraj' });
     this.metaService.updateTag({ name: 'twitter:description', content: defaultDesc });
     this.metaService.updateTag({ name: 'twitter:image', content: defaultImg });
+  }
+
+  // Mismo criterio "{nombre}, {cargo} — {extracto}" que usa el backend en
+  // /api/og-preview (api/server-api.ts). Ese endpoint solo lo usan los pocos
+  // crawlers que Vercel logra identificar por user-agent (vercel.json); esta
+  // página es la que sirve a TODOS los demás -incluido el crawler de WhatsApp
+  // en móvil cuando no coincide con esa detección-, así que necesita la misma
+  // firma para que la vista previa no dependa de adivinar el user-agent.
+  private buildShareDescription(post: BlogPost, excerpt: string): string {
+    const authorLabel = post.author_name
+      ? (post.author_role ? `${post.author_name}, ${post.author_role}` : post.author_name)
+      : '';
+    if (!authorLabel) return excerpt;
+
+    const prefix = `Por ${authorLabel} — `;
+    const maxExcerptLength = Math.max(0, 160 - prefix.length);
+    const truncated = excerpt.length > maxExcerptLength
+      ? `${excerpt.substring(0, Math.max(0, maxExcerptLength - 3))}...`
+      : excerpt;
+    return `${prefix}${truncated}`;
   }
 
   private extractCleanSnippet(htmlOrText: string): string {
