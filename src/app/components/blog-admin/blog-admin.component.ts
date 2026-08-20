@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { BlogService } from '../../services/blog.service';
 import { OpenaiService } from '../../services/openai.service';
 import { BlogPost } from '../../models/blog.model';
@@ -14,7 +15,7 @@ import { SocialImage } from '../../models/social-image.model';
   templateUrl: './blog-admin.component.html',
   styleUrls: ['./blog-admin.component.css']
 })
-export class BlogAdminComponent implements OnInit {
+export class BlogAdminComponent implements OnInit, OnDestroy {
   @Output() closeAdmin = new EventEmitter<void>();
   @Output() refreshList = new EventEmitter<void>();
 
@@ -104,18 +105,76 @@ export class BlogAdminComponent implements OnInit {
   editCampaignLoading = false;
   editCampaignError = '';
 
+  private sessionSub?: Subscription;
+
   constructor(
     public blogService: BlogService,
     private openaiService: OpenaiService
   ) {}
 
   ngOnInit(): void {
-    if (this.blogService.isLoggedIn()) {
-      this.viewState = 'dashboard';
-      this.loadPosts();
-    } else {
+    // Cualquier caída de sesión (aquí al entrar, o más tarde por el interceptor
+    // si el token muere mientras se redacta) devuelve al login explicando por qué.
+    this.sessionSub = this.blogService.sessionExpired$.subscribe(reason => {
+      if (!reason) return;
+      this.stashDraftIfEditing();
       this.viewState = 'login';
+      this.postsList = [];
+      this.authError = reason;
+    });
+
+    if (!this.blogService.isLoggedIn()) {
+      // isLoggedIn() ya descarta el token caducado, así que no llegamos a pintar
+      // el panel con una credencial muerta. Si quedaba un token muerto en el
+      // navegador se purga aquí y forceLogout() explica el motivo en el login.
+      this.blogService.forceLogout('Tu sesión expiró. Inicia sesión de nuevo para publicar.');
+      this.viewState = 'login';
+      return;
     }
+
+    // El token está en fecha, pero puede estar revocado de hecho: la cuenta pudo
+    // eliminarse o cambiar de rol. Se confirma contra el servidor antes de dejar
+    // escribir, para no descubrirlo al pulsar publicar.
+    this.viewState = 'dashboard';
+    this.blogService.verifySession().subscribe(user => {
+      if (user) {
+        this.loadPosts();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sessionSub?.unsubscribe();
+  }
+
+  // Guarda el artículo a medias para poder ofrecerlo de vuelta tras reingresar.
+  private stashDraftIfEditing(): void {
+    if (this.viewState !== 'editor') return;
+    if (!this.editingPost?.title?.trim() && !this.editingPost?.content?.trim()) return;
+    this.blogService.saveDraft(this.editingPost);
+  }
+
+  // Tras iniciar sesión, si quedó un borrador de una sesión caída se ofrece
+  // recuperarlo en vez de perder el texto escrito.
+  private offerDraftRecovery(): void {
+    const draft = this.blogService.getDraft();
+    if (!draft) return;
+
+    const label = draft.title?.trim() || 'sin título';
+    const recover = confirm(
+      `Se encontró un artículo sin publicar de tu sesión anterior ("${label}").\n\n` +
+      `¿Quieres recuperarlo y continuar donde lo dejaste?`
+    );
+
+    if (recover) {
+      this.editingPost = draft;
+      this.tagsInput = (draft.tags || []).join(', ');
+      this.editorTab = 'edit';
+      this.viewState = 'editor';
+      this.updateStats();
+    }
+
+    this.blogService.clearDraft();
   }
 
   getEmptyPost(): BlogPost {
@@ -146,8 +205,13 @@ export class BlogAdminComponent implements OnInit {
     this.blogService.login(this.username, this.password).subscribe({
       next: () => {
         this.authLoading = false;
+        this.authError = '';
+        this.password = '';
         this.viewState = 'dashboard';
         this.loadPosts();
+        // Con el token ya renovado, se recupera el artículo que quedó a medias
+        // si la sesión anterior se cayó mientras se redactaba.
+        this.offerDraftRecovery();
       },
       error: (err) => {
         this.authLoading = false;
@@ -665,6 +729,12 @@ IMPORTANTE: Debes responder ÚNICAMENTE en formato JSON plano (sin bloques de c�
       },
       error: (err) => {
         this.editorLoading = false;
+        if (err.status === 401) {
+          // Sesión caída: el interceptor ya guardó el borrador y devolvió al
+          // login con el motivo. Un alert de "error al guardar" aquí solo
+          // confundiría, porque el texto no se ha perdido.
+          return;
+        }
         alert('Error al guardar el artículo: ' + (err.error?.error || err.message));
       }
     });

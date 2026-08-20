@@ -52,7 +52,17 @@ loadEnvFromFile();
 
 // 1. Inicialización de Supabase
 const supabaseUrl = process.env['SUPABASE_URL'] || '';
-const supabaseKey = process.env['SUPABASE_KEY'] || '';
+// La autorización real la hace authenticateToken con nuestro propio JWT, así que
+// el backend debe hablar con Supabase usando una clave secreta (service_role /
+// sb_secret_...) que ignora RLS. Con la clave pública (anon / sb_publishable_...)
+// las políticas de RLS son las que mandan, y para que el backend pudiera borrar
+// había que abrir el borrado a todo el mundo — que es justo lo que se estaba
+// llevando por delante los comentarios. Se mantiene SUPABASE_KEY como respaldo
+// para no romper despliegues que aún no tengan la variable nueva.
+const supabaseKey = process.env['SUPABASE_SECRET_KEY']
+  || process.env['SUPABASE_SERVICE_ROLE_KEY']
+  || process.env['SUPABASE_KEY']
+  || '';
 const jwtSecret = process.env['JWT_SECRET'] || 'nehoraj-super-secret-key-2026';
 const openaiApiKey = process.env['openaiApiKey'] || process.env['OPENAI_API_KEY'] || '';
 
@@ -150,13 +160,23 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    res.status(401).json({ error: 'Acceso denegado. Token no proporcionado.' });
+    res.status(401).json({ error: 'Acceso denegado. Token no proporcionado.', code: 'TOKEN_MISSING' });
     return;
   }
 
   jwt.verify(token, jwtSecret, (err: any, user: any) => {
     if (err) {
-      res.status(403).json({ error: 'Token inválido o expirado.' });
+      // Se distingue el token caducado del inválido y ambos van con 401 (no 403):
+      // el cliente los trata como "sesión terminada, vuelve a iniciar sesión",
+      // mientras que 403 queda reservado para "estás autenticado pero tu rol no
+      // alcanza", que no se arregla volviendo a iniciar sesión.
+      const expired = err.name === 'TokenExpiredError';
+      res.status(401).json({
+        error: expired
+          ? 'Tu sesión expiró. Inicia sesión de nuevo.'
+          : 'Token inválido. Inicia sesión de nuevo.',
+        code: expired ? 'TOKEN_EXPIRED' : 'TOKEN_INVALID'
+      });
       return;
     }
     req.user = user as AuthenticatedRequest['user'];
@@ -264,6 +284,39 @@ router.post('/auth/login', async (req: Request, res: Response): Promise<any> => 
   } catch (error: any) {
     console.error('Error en el login:', error);
     return res.status(500).json({ error: 'Error del servidor en el login.', details: error.message });
+  }
+});
+
+// Validación de la sesión actual.
+// Que el JWT tenga firma válida y no haya expirado no basta: el redactor pudo
+// haber sido eliminado o haber cambiado de rol después de emitirse el token.
+// Confirmamos contra la base de datos y devolvemos los datos frescos para que
+// el cliente refresque su estado (o cierre la sesión si la cuenta ya no existe).
+router.get('/auth/me', authenticateToken as any, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+  try {
+    const { data: user, error } = await supabase!
+      .from('blog_users')
+      .select('id, username, role, avatar_url')
+      .eq('id', req.user!.userId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!user) {
+      return res.status(401).json({ error: 'La cuenta ya no existe. Inicia sesión de nuevo.' });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        avatar_url: user.avatar_url || ''
+      }
+    });
+  } catch (error: any) {
+    console.error('Error al validar la sesión:', error);
+    return res.status(500).json({ error: 'Error al validar la sesión.', details: error.message });
   }
 });
 
