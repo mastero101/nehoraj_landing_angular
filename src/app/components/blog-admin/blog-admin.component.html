@@ -501,8 +501,8 @@
             [alt]="editingPost.author_name"
             class="w-12 h-12 rounded-full object-cover ring-4 ring-white shadow-md">
           <div>
-            <p class="text-sm font-bold text-gray-900 leading-tight mb-0.5">{{ editingPost.author_name }}</p>
-            <p class="text-xs text-blue-600 font-semibold">{{ editingPost.author_role || 'Colaborador Estratégico' }}</p>
+            <p class="text-sm font-bold text-gray-900 leading-tight mb-0.5">{{ (editingPost.author_role || 'Colaborador Estratégico') + ' ' + editingPost.author_name }}</p>
+            <p class="text-xs text-blue-600 font-semibold">Grupo Nehoraj</p>
           </div>
         </div>
 

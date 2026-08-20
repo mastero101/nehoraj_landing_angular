@@ -63,6 +63,14 @@ export class BlogListComponent implements OnInit {
     if (id) this.selectPost.emit(id);
   }
 
+  // Firma del autor: "{cargo} {nombre}" en una sola línea, con "Grupo Nehoraj"
+  // como marca fija debajo (no el cargo, que ya va aquí arriba).
+  authorByline(post: BlogPost): string {
+    const role = (post.author_role || 'Colaborador').trim();
+    const name = (post.author_name || 'Autor').trim();
+    return `${role} ${name}`;
+  }
+
   onDeletePost(event: Event, id: string): void {
     event.stopPropagation();
     if (confirm('¿Estás seguro de que deseas eliminar este artículo?')) {

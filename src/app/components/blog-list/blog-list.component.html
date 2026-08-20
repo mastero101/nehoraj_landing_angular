@@ -103,14 +103,14 @@
 
         <!-- Autor & Acciones Admin (Al final de la tarjeta) -->
         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-3">
-            <img 
-              [src]="post.author_avatar || 'assets/img/cofounder-1.png'" 
-              [alt]="post.author_name" 
-              class="w-8 h-8 rounded-full object-cover ring-2 ring-blue-50">
-            <div>
-              <p class="text-xs font-bold text-gray-900 leading-none mb-0.5">{{ post.author_name || 'Autor' }}</p>
-              <p class="text-[10px] text-gray-400 leading-none">{{ post.author_role || 'Colaborador' }}</p>
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              [src]="post.author_avatar || 'assets/img/cofounder-1.png'"
+              [alt]="post.author_name"
+              class="w-8 h-8 rounded-full object-cover ring-2 ring-blue-50 shrink-0">
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-gray-900 leading-none mb-0.5 truncate">{{ authorByline(post) }}</p>
+              <p class="text-[10px] text-gray-400 leading-none">Grupo Nehoraj</p>
             </div>
           </div>
 

@@ -119,6 +119,14 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.goBack.emit();
   }
 
+  // Firma del autor: "{cargo} {nombre}" en una sola línea, con "Grupo Nehoraj"
+  // como marca fija debajo (no el cargo, que ya va aquí arriba).
+  get authorByline(): string {
+    const role = (this.post?.author_role || 'Colaborador Estratégico').trim();
+    const name = (this.post?.author_name || 'Autor de Nehoraj').trim();
+    return `${role} ${name}`;
+  }
+
   // Convierte el texto plano del editor en HTML legible: una línea en blanco
   // separa párrafos, un salto simple se vuelve <br>. Los bloques que ya
   // empiezan con una etiqueta de bloque (el redactor escribió HTML a mano)
