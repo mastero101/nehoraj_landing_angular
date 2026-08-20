@@ -474,11 +474,12 @@ function generateOgHtmlResponse(post: any): string {
   const baseDescription = rawExcerpt || 'Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras.';
   // WhatsApp/Facebook/Twitter no tienen un campo aparte para el autor en su
   // tarjeta de previsualización: solo pintan imagen, título y descripción. Por
-  // eso el cargo y el nombre del autor van antepuestos a la descripción -mismo
-  // criterio "{cargo} {nombre}" que usa la firma dentro del artículo-, que es
-  // lo único que el usuario ve además del título al compartir el enlace.
+  // eso el nombre y el cargo del autor van antepuestos a la descripción, que
+  // es lo único que el usuario ve además del título al compartir el enlace.
+  // Orden "{nombre}, {cargo}" -distinto al de la firma dentro del artículo,
+  // que va "{cargo} {nombre}"-: cada superficie pidió su propio orden.
   const authorLabel = post?.author_name
-    ? (post.author_role ? `${post.author_role} ${post.author_name}` : post.author_name)
+    ? (post.author_role ? `${post.author_name}, ${post.author_role}` : post.author_name)
     : '';
   const authorPrefix = authorLabel ? `Por ${authorLabel} — ` : '';
   const maxExcerptLength = 160 - authorPrefix.length;
