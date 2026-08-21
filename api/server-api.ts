@@ -31,6 +31,46 @@ const supabase: SupabaseClient | null = supabaseUrl && supabaseKey
     })
   : null;
 
+// Diagnóstico de la clave en uso SIN exponer su valor: solo de qué variable
+// salió y de qué tipo es, deducido del prefijo. Sirve para confirmar que el
+// backend ya migró a la clave secreta ANTES de endurecer las políticas de RLS
+// -si se endurecen mientras sigue usando la clave pública, el propio backend
+// pierde el permiso de escribir y se caen login, publicación y moderación-.
+export function describeSupabaseKey(): { source: string; kind: string; bypassesRls: boolean } {
+  let source = 'ninguna';
+  if (process.env['SUPABASE_SECRET_KEY']) source = 'SUPABASE_SECRET_KEY';
+  else if (process.env['SUPABASE_SERVICE_ROLE_KEY']) source = 'SUPABASE_SERVICE_ROLE_KEY';
+  else if (process.env['SUPABASE_KEY']) source = 'SUPABASE_KEY';
+
+  let kind = 'desconocido';
+  let bypassesRls = false;
+
+  if (!supabaseKey) {
+    kind = 'ausente';
+  } else if (supabaseKey.startsWith('sb_secret_')) {
+    kind = 'secret (formato nuevo)';
+    bypassesRls = true;
+  } else if (supabaseKey.startsWith('sb_publishable_')) {
+    kind = 'publishable / publica (formato nuevo)';
+  } else if (supabaseKey.startsWith('eyJ')) {
+    try {
+      const payload = JSON.parse(Buffer.from(supabaseKey.split('.')[1], 'base64').toString('utf8'));
+      if (payload?.role === 'service_role') {
+        kind = 'JWT service_role';
+        bypassesRls = true;
+      } else if (payload?.role === 'anon') {
+        kind = 'JWT anon / publica';
+      } else {
+        kind = `JWT rol desconocido`;
+      }
+    } catch (e) {
+      kind = 'JWT ilegible';
+    }
+  }
+
+  return { source, kind, bypassesRls };
+}
+
 router.use((req: Request, res: Response, next: NextFunction): void => {
   if (!supabase) {
     res.status(500).json({
@@ -47,8 +87,9 @@ router.get('/health', (req: Request, res: Response): Response => {
     ok: true,
     runtime: 'serverless',
     hasSupabaseUrl: Boolean(process.env['SUPABASE_URL']),
-    hasSupabaseKey: Boolean(process.env['SUPABASE_KEY']),
-    hasJwtSecret: Boolean(process.env['JWT_SECRET'])
+    hasSupabaseKey: Boolean(supabaseKey),
+    hasJwtSecret: Boolean(process.env['JWT_SECRET']),
+    supabaseKeyInfo: describeSupabaseKey()
   });
 });
 
