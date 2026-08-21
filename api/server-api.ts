@@ -469,24 +469,27 @@ function escapeOgHtml(str: string): string {
 }
 
 function generateOgHtmlResponse(post: any): string {
-  const title = post?.title ? `${post.title} | Grupo Nehoraj` : 'Grupo Nehoraj - Transformación Digital & Innovación Tecnológica';
   const rawExcerpt = post?.excerpt || (post?.content ? post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '');
   const baseDescription = rawExcerpt || 'Transformamos tu negocio con soluciones tecnológicas personalizadas, combinando inteligencia artificial, desarrollo de software a medida y aplicaciones innovadoras.';
-  // WhatsApp/Facebook/Twitter no tienen un campo aparte para el autor en su
-  // tarjeta de previsualización: solo pintan imagen, título y descripción. Por
-  // eso el nombre y el cargo del autor van antepuestos a la descripción, que
-  // es lo único que el usuario ve además del título al compartir el enlace.
-  // Orden "{nombre}, {cargo}" -distinto al de la firma dentro del artículo,
-  // que va "{cargo} {nombre}"-: cada superficie pidió su propio orden.
+
+  // El autor va como sufijo del título, en el lugar que antes ocupaba
+  // "| Grupo Nehoraj". Ese sufijo sobraba: las tarjetas de enlace ya muestran
+  // el nombre del sitio por separado (og:site_name), así que "Grupo Nehoraj"
+  // aparecía dos veces en la misma tarjeta. Orden "{nombre}, {cargo}",
+  // distinto al de la firma dentro del artículo ("{cargo} {nombre}"): cada
+  // superficie pidió el suyo.
   const authorLabel = post?.author_name
     ? (post.author_role ? `${post.author_name}, ${post.author_role}` : post.author_name)
     : '';
-  const authorPrefix = authorLabel ? `Por ${authorLabel} — ` : '';
-  const maxExcerptLength = 160 - authorPrefix.length;
-  const truncatedExcerpt = baseDescription.length > maxExcerptLength
-    ? `${baseDescription.substring(0, maxExcerptLength - 3)}...`
+  const titleSuffix = authorLabel ? ` | Por ${authorLabel}` : ' | Grupo Nehoraj';
+  const title = post?.title
+    ? `${post.title}${titleSuffix}`
+    : 'Grupo Nehoraj - Transformación Digital & Innovación Tecnológica';
+
+  // La descripción queda solo con el extracto: el autor ya se lee en el título.
+  const description = baseDescription.length > 160
+    ? `${baseDescription.substring(0, 157)}...`
     : baseDescription;
-  const description = post?.author_name ? `${authorPrefix}${truncatedExcerpt}` : truncatedExcerpt;
   const image = post?.cover_image || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1200&q=80';
   const url = post?.id ? `https://nehoraj.com/?post=${post.id}` : 'https://nehoraj.com/';
   const siteName = 'Grupo Nehoraj';
