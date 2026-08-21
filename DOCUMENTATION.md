@@ -103,7 +103,7 @@ Ambos entry points comparten `src/server-api.ts`, que centraliza:
 |---|---|
 | `SUPABASE_URL` | URL del proyecto Supabase |
 | `SUPABASE_KEY` | Clave anon o service_role de Supabase |
-| `JWT_SECRET` | Secreto para firmar/verificar tokens JWT (7 días de expiración) |
+| `JWT_SECRET` | Secreto para firmar/verificar tokens JWT (24 horas de expiración) |
 | `BLOB_READ_WRITE_TOKEN` | Token de Vercel Blob (inyectado automáticamente en Vercel) |
 
 Si `SUPABASE_URL` o `SUPABASE_KEY` no están definidas, **todas** las rutas del router responden `500` mediante un middleware de guardia (`server-api.ts:61`).

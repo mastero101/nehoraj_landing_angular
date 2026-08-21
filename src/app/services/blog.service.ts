@@ -30,7 +30,7 @@ export class BlogService {
 
     if (isPlatformBrowser(this.platformId)) {
       // Antes se restauraba el usuario mirando solo si había algo guardado, sin
-      // comprobar el token. Un token de hace más de 7 días pintaba el panel como
+      // comprobar el token. Un token de hace más de 24 horas pintaba el panel como
       // si la sesión siguiera viva y el fallo no aparecía hasta pulsar publicar,
       // con el artículo ya escrito. Ahora la sesión muerta se purga al arrancar.
       const token = localStorage.getItem('blog_token');
