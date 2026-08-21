@@ -33,10 +33,17 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
   commentSubmitting = false;
 
   constructor(
-    private blogService: BlogService,
+    public blogService: BlogService,
     private titleService: Title,
     private metaService: Meta
   ) {}
+
+  // Igual que BlogAdminComponent.isAdmin: el borrado de comentarios es
+  // moderación (solo admin), no cualquier redactor autenticado -mismo
+  // criterio que ya aplica el backend en DELETE /blog/comments/:id-.
+  get isAdmin(): boolean {
+    return this.blogService.currentUserValue?.role === 'admin';
+  }
 
   ngOnInit(): void {
     if (this.postId) {
@@ -218,6 +225,29 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.commentSubmitting = false;
         this.commentError = err.error?.error || 'Error al publicar el comentario. Intenta de nuevo.';
+      }
+    });
+  }
+
+  // Moderación: borrar un comentario público (solo admin). El backend ya
+  // rechaza esto sin JWT de admin (401/403); aquí solo falta ofrecer el
+  // botón, que nunca se conectó a la UI pese a que el servicio y el
+  // endpoint ya existían.
+  deleteComment(comment: BlogComment): void {
+    if (!confirm(`¿Eliminar el comentario de "${comment.author}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    this.blogService.deleteComment(comment.id).subscribe({
+      next: () => {
+        this.comments = this.comments.filter(c => c.id !== comment.id);
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          // Sesión caída: el interceptor global ya cerró la sesión y explicó
+          // el motivo; un alert aquí encima solo duplicaría el aviso.
+          return;
+        }
+        alert('Error al eliminar el comentario: ' + (err.error?.error || err.message));
       }
     });
   }
